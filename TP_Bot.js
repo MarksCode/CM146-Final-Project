@@ -52,59 +52,6 @@ function script() {
         $('html').remove();
     }
 
-    function create_vec2(x,y){
-        var vec2 = {};
-        vec2.x = x;
-        vec2.y = y;
-        vec2.dot = function(other){
-            return this.x * other.x + this.y * other.y;
-        }
-        vec2.cross = function(other){
-            // returns scalar, which is really a vector along z
-            return this.x * other.y - this.y * other.x;
-        }
-        vec2.norm = function(){
-            return Math.sqrt(this.dot(this));
-        }
-        vec2.scale = function(factor){
-            return create_vec2(this.x*factor,this.y*factor);
-        }
-        vec2.unit = function(){
-            var norm = this.norm();
-            return create_vec2(this.x,this.y).scale(1/norm);
-        }
-        vec2.perp = function(){
-            return create_vec2(-this.y,this.x);
-        }
-        vec2.neg = function(){
-            return create_vec2(-this.x,-this.y);
-        }
-        vec2.add = function(other){
-            return create_vec2(this.x + other.x, this.y + other.y);
-        }
-        vec2.sub = function(other){
-            return this.add(other.neg());
-        }
-        vec2.lr = function(p2,p3){
-            return (p2.x * p3.y - p2.y * p3.x) - this.x * (p3.y - p2.y) + this.y * (p3.x - p2.x);
-        }
-
-        return vec2;
-    }
-
-    function create_rectangle(vec2_array){
-        var rectangle = {};
-        rectangle.points = vec2_array;
-        rectangle.contains = function(m){
-            var ab = this.points[0][0].sub(this.points[0][1]); // b - a
-            var bc = this.points[1][0].sub(this.points[0][0]); // c - b
-            var am = m.sub(this.points[0][1]);
-            var bm = m.sub(this.points[0][0]);
-            return (0 <= ab.dot(am) && ab.dot(am) <= ab.dot(ab) && 0 <= bc.dot(bm) && bc.dot(bm) <= bc.dot(bc));
-        }
-
-        return rectangle;
-    }
 
     function create_controller(PIDconstants){
         var controller = {};
@@ -250,8 +197,6 @@ function script() {
 
         decision_maker.create_target = function(){
             var target = {};
-            var ofm_center = [12,9];
-            var center = create_vec2(ofm_center[0],ofm_center[1]).scale(40);
             // var opponent = this.find_player(function(dm,player){
             //     return (player.id !== dm.me.id);
             // });
@@ -275,9 +220,9 @@ function script() {
         return decision_maker;
     }
 
-    function run() {
+    function run_bot() {
         var me = tagpro.players[tagpro.playerId];
-        no_draw();
+        // no_draw();
 
         PID_constants = {};
         PID_constants.KP = 0.036;
@@ -303,7 +248,7 @@ function script() {
         fn();
     }
 
-    main(run);
+    main(run_bot);
 }
 
 tagpro.ready(function() {
