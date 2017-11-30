@@ -1,0 +1,122 @@
+{
+  "info": {
+    "name": "Labyrinth",
+    "author": "Anonymous",
+    "gameMode": "normal"
+  },
+  "switches": {
+    "4,12": {
+      "toggle": [
+        {
+          "pos": {
+            "x": 5,
+            "y": 10
+          }
+        },
+        {
+          "pos": {
+            "x": 6,
+            "y": 10
+          }
+        },
+        {
+          "pos": {
+            "x": 7,
+            "y": 10
+          }
+        },
+        {
+          "pos": {
+            "x": 8,
+            "y": 10
+          }
+        },
+        {
+          "pos": {
+            "x": 9,
+            "y": 10
+          }
+        }
+      ],
+      "timer": 0
+    },
+    "10,8": {
+      "toggle": [
+        {
+          "pos": {
+            "x": 5,
+            "y": 10
+          }
+        },
+        {
+          "pos": {
+            "x": 6,
+            "y": 10
+          }
+        },
+        {
+          "pos": {
+            "x": 7,
+            "y": 10
+          }
+        },
+        {
+          "pos": {
+            "x": 8,
+            "y": 10
+          }
+        },
+        {
+          "pos": {
+            "x": 9,
+            "y": 10
+          }
+        }
+      ],
+      "timer": 0
+    }
+  },
+  "fields": {
+    "5,10": {
+      "defaultState": "on"
+    },
+    "6,10": {
+      "defaultState": "on"
+    },
+    "7,10": {
+      "defaultState": "on"
+    },
+    "8,10": {
+      "defaultState": "on"
+    },
+    "9,10": {
+      "defaultState": "on"
+    }
+  },
+  "portals": {},
+  "marsballs": [],
+  "spawnPoints": {
+    "red": [
+      {
+        "x": 2,
+        "y": 32,
+        "radius": 1,
+        "weight": 1
+      },
+      {
+        "x": 2,
+        "y": 34,
+        "radius": 1,
+        "weight": 1
+      }
+    ],
+    "blue": [
+      {
+        "x": 2,
+        "y": 33,
+        "radius": 1,
+        "weight": 1
+      }
+    ]
+  }
+}
