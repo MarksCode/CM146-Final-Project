@@ -14,7 +14,7 @@
 
 5. Bot behavior should take over at this point!
 
-6. If you want to add another player to the game (i.e. the human player), open another browser (Firefox, Safari, etc.), join group and using group link, and join the game.
+6. If you want to add another player to the game (i.e. the human player), open another browser (Firefox, Safari, etc.), join group and using group link, and join the game. Note that human player's name should be set to "Player 1" (Login then set display name in profile).
 
 
 #### Instructions for making/testing labyrinth:
