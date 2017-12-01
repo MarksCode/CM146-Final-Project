@@ -14,7 +14,7 @@
 
 5. Bot behavior should take over at this point!
 
-6. If you want to add another player to the game (i.e. the human player), open another browser (Firefox, Safari, etc.), join group and using group link, and join the game. Note that human player's name should be set to "Player 1" (Login then set display name in profile).
+6. If you want to add another player to the game (i.e. the human player), open another browser (Firefox, Safari, etc.), join group using group link, and join the game. Note that human player's name should be set to "Player 1" (Login then set display name in profile).
 
 
 #### Instructions for making/testing labyrinth:
@@ -35,9 +35,10 @@
 
 2. In step 4 of instructions on using the script, under map use following setup:
     ```
-        Map: "Map from some website id"
+      Under Map:
         In text box, put the id from the last part of your uploaded map's url
-        Select "http://unfortunate-maps.jukejuice.com/"
+        Select "http://unfortunate-maps.jukejuice.com/" in bottom dropdown
+        Select "Map from some website id" in top dropdown
     ```
 
 3. Launch the game as usual.
