@@ -3,11 +3,7 @@
 // @version     0.1
 // @include     *.newcompte.fr:*
 // @grant       GM_getResourceText
-// @resource    obstacles https://raw.githubusercontent.com/MarksCode/CM146-Final-Project/master/Obstacles.json
 // ==/UserScript==
-
-var obstacles = GM_getResourceText('obstacles');
-console.log(obstacles);
 
 function waitForId(fn) {
     // Don't execute the function until tagpro.playerId has been assigned.
@@ -115,6 +111,7 @@ function script() {
 
 // Find all starting points for obstacles in maze
 function preprocess() {
+    let foundObstacles = {};
     let obstacleStartingPoints = [];
     for (let i=0; i<tagpro.map.length; i++) {
         for (let y=0; y<tagpro.map[i].length; y++) {
@@ -125,15 +122,38 @@ function preprocess() {
     } 
     for (let point of obstacleStartingPoints) {
         let [i, y] = point;
-        let row1 = tagpro.map[i-1].slice(y-1, y+2).reduce(x => {x === 9 ? 1 : 0});
-        let row2 = tagpro.map[i].slice(y-1, y+2).reduce(x => {x === 9 ? 1 : 0});
-        let row3 = tagpro.map[i+1].slice(y-1, y+2).reduce(x => {x === 9 ? 1 : 0});
-        
+        let config = [
+            tagpro.map[i-1].slice(y-1, y+2).map(x => {return x === 9 ? 1 : 0}),
+            tagpro.map[i].slice(y-1, y+2).map(x => {return x === 9 ? 1 : 0}),
+            tagpro.map[i+1].slice(y-1, y+2).map(x => {return x === 9 ? 1 : 0})
+        ]
+        for (let key in obstacles) {
+            let obstcl = obstacles[key];
+            var isSame = true;
+            for (let a=0; a<3; a++) {
+                for (let b=0; b<3; b++) {
+                    if (config[a][b] !== obstcl.config[a][b]) isSame = false;
+                }
+            }
+            if (isSame) {
+                console.log(i, y, key);
+            }
+        }
     }
 }
 
 tagpro.ready(function() {
-    waitForId(script);
+    let url = 'https://raw.githubusercontent.com/MarksCode/CM146-Final-Project/master/Obstacles.json';
+    fetch(url)
+    .then(response => 
+        response.json().then(data => ({
+            data: data,
+            status: response.status
+        })
+    ).then(res => {
+        obstacles = res.data;
+        waitForId(script);
+    }));
 });
 
 
@@ -268,7 +288,6 @@ function create_controller(PIDconstants){
     controller.PID = create_PID(PIDconstants);
     return controller;
 }
-
 
 // removes the all tagpro rendering and suppresses errors to
 // preserve computational power for actual bot shenanigans
