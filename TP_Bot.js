@@ -1,7 +1,8 @@
 // ==UserScript==
-// @name         Labyrinth Bot
-// @version      0.1
-// @include      *.newcompte.fr:*
+// @name        Labyrinth Bot
+// @version     0.1
+// @include     *.newcompte.fr:*
+// @grant       GM_getResourceText
 // ==/UserScript==
 
 function waitForId(fn) {
@@ -20,7 +21,9 @@ function waitForId(fn) {
 
 function script() {
     var ctrl_period = 50;
-    var counter = 0;   
+    var counter = 0;
+
+    let startingPoints = preprocess();
 
     function create_decision_maker(me){
         var decision_maker = {};
@@ -118,8 +121,52 @@ function script() {
     main(run_bot);
 }
 
+
+// Find all starting points for obstacles in maze
+function preprocess() {
+    let foundObstacles = {};
+    let obstacleStartingPoints = [];
+    for (let i=0; i<tagpro.map.length; i++) {
+        for (let y=0; y<tagpro.map[i].length; y++) {
+            if (tagpro.map[i][y] === 18) {
+                obstacleStartingPoints.push([i, y]);
+            }
+        }
+    } 
+    for (let point of obstacleStartingPoints) {
+        let [i, y] = point;
+        let config = [
+            tagpro.map[i-1].slice(y-1, y+2).map(x => {return x === 9 ? 1 : 0}),
+            tagpro.map[i].slice(y-1, y+2).map(x => {return x === 9 ? 1 : 0}),
+            tagpro.map[i+1].slice(y-1, y+2).map(x => {return x === 9 ? 1 : 0})
+        ]
+        for (let key in obstacles) {
+            let obstcl = obstacles[key];
+            var isSame = true;
+            for (let a=0; a<3; a++) {
+                for (let b=0; b<3; b++) {
+                    if (config[a][b] !== obstcl.config[a][b]) isSame = false;
+                }
+            }
+            if (isSame) {
+                console.log(i, y, key);
+            }
+        }
+    }
+}
+
 tagpro.ready(function() {
-    waitForId(script);
+    let url = 'https://raw.githubusercontent.com/MarksCode/CM146-Final-Project/master/Obstacles.json';
+    fetch(url)
+    .then(response => 
+        response.json().then(data => ({
+            data: data,
+            status: response.status
+        })
+    ).then(res => {
+        obstacles = res.data;
+        waitForId(script);
+    }));
 });
 
 
@@ -254,7 +301,6 @@ function create_controller(PIDconstants){
     controller.PID = create_PID(PIDconstants);
     return controller;
 }
-
 
 // removes the all tagpro rendering and suppresses errors to
 // preserve computational power for actual bot shenanigans
