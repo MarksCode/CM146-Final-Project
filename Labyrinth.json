@@ -91,9 +91,38 @@
     },
     "9,10": {
       "defaultState": "on"
+    },
+    "27,8": {
+      "defaultState": "off"
+    },
+    "27,10": {
+      "defaultState": "off"
+    },
+    "29,8": {
+      "defaultState": "off"
+    },
+    "29,10": {
+      "defaultState": "off"
     }
   },
-  "portals": {},
+  "portals": {
+    "24,16": {
+      "destination": {
+        "x": 26,
+        "y": 16
+      },
+      "cooldown": 0
+    },
+    "26,16": {},
+    "30,16": {},
+    "32,16": {
+      "destination": {
+        "x": 30,
+        "y": 16
+      },
+      "cooldown": 0
+    }
+  },
   "marsballs": [],
   "spawnPoints": {
     "red": [
