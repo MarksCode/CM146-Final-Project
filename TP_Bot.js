@@ -1,8 +1,13 @@
 // ==UserScript==
-// @name         Labyrinth Bot
-// @version      0.1
-// @include      *.newcompte.fr:*
+// @name        Labyrinth Bot
+// @version     0.1
+// @include     *.newcompte.fr:*
+// @grant       GM_getResourceText
+// @resource    obstacles https://raw.githubusercontent.com/MarksCode/CM146-Final-Project/master/Obstacles.json
 // ==/UserScript==
+
+var obstacles = GM_getResourceText('obstacles');
+console.log(obstacles);
 
 function waitForId(fn) {
     // Don't execute the function until tagpro.playerId has been assigned.
@@ -20,7 +25,9 @@ function waitForId(fn) {
 
 function script() {
     var ctrl_period = 50;
-    var counter = 0;   
+    var counter = 0;
+
+    let startingPoints = preprocess();
 
     function create_decision_maker(me){
         var decision_maker = {};
@@ -103,6 +110,26 @@ function script() {
     }
 
     main(run_bot);
+}
+
+
+// Find all starting points for obstacles in maze
+function preprocess() {
+    let obstacleStartingPoints = [];
+    for (let i=0; i<tagpro.map.length; i++) {
+        for (let y=0; y<tagpro.map[i].length; y++) {
+            if (tagpro.map[i][y] === 18) {
+                obstacleStartingPoints.push([i, y]);
+            }
+        }
+    } 
+    for (let point of obstacleStartingPoints) {
+        let [i, y] = point;
+        let row1 = tagpro.map[i-1].slice(y-1, y+2).reduce(x => {x === 9 ? 1 : 0});
+        let row2 = tagpro.map[i].slice(y-1, y+2).reduce(x => {x === 9 ? 1 : 0});
+        let row3 = tagpro.map[i+1].slice(y-1, y+2).reduce(x => {x === 9 ? 1 : 0});
+        
+    }
 }
 
 tagpro.ready(function() {
