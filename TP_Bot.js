@@ -9,7 +9,7 @@ function waitForId(fn) {
     // Don't execute the function until tagpro.playerId has been assigned.
     if (!tagpro || !tagpro.playerId) {
         return setTimeout(function() {
-            waitForId(fn)
+            waitForId(fn);
         }, 100);
     } else {
         // Only run the script if we are not spectating.
@@ -30,6 +30,7 @@ function script() {
         decision_maker.me = me;
         decision_maker.role = {};
         decision_maker.human = null; // will be set for caching
+        decision_maker.lastPlayerPos = {x: me.x, y: me.y, vx: -0, vy: -0};
 
         decision_maker.decide = function(){
             this.decide_role();
@@ -38,7 +39,8 @@ function script() {
 
         // Based off current state and step of bot, decide where it should go
         decision_maker.create_target = function(){
-            var target = {};
+            var curPlayerPos = {};
+            var target = this.lastPlayerPos;
 
             if (this.role.state === 'follow') {    // bot should follow around human player
                 if (!this.human) {
@@ -47,18 +49,29 @@ function script() {
                     })
                     if (humanPlayers.length > 0) {
                         this.human = tagpro.players[humanPlayers[0]];
+                        this.lastPlayerPos = {
+                          x: this.human.x, y: this.human.y, vx: -0, vy: -0
+                        };    // initialize last and current player position once human player has been found
                     }
                 }
                 if (this.human) {
-                    target = {
-                        x: this.human.x - 50, y: this.human.y, vx: this.human.vx, vy: this.human.vy
+                  //get player's current position and compare it to the last recorded position
+                  //if the difference is >= the size of a ball, move the last recorded position and update it as the player's current position
+                    curPlayerPos = {
+                        x: this.human.x, y: this.human.y, vx: -0, vy: -0
+                    };
+
+                    var dist = Math.sqrt(Math.pow(curPlayerPos.x-this.lastPlayerPos.x, 2) + Math.pow(curPlayerPos.y-this.lastPlayerPos.y, 2));
+                    if (Math.abs(dist) >= 75){
+                      target = this.lastPlayerPos;
+                      this.lastPlayerPos = curPlayerPos;
                     }
                 }
             }
 
 
             if (Object.keys(target).length === 0) {   // target hasn't been set for some reason
-                target = {x: 400, y: 400, vx: -0, vy: -0};  // arbitrary default value
+                target = {x: this.me.x, y: this.me.y, vx: -0, vy: -0};  // arbitrary default value
             }
 
             return target;
@@ -119,7 +132,7 @@ function preprocess() {
                 obstacleStartingPoints.push([i, y]);
             }
         }
-    } 
+    }
     for (let point of obstacleStartingPoints) {
         let [i, y] = point;
         let config = [
@@ -145,7 +158,7 @@ function preprocess() {
 tagpro.ready(function() {
     let url = 'https://raw.githubusercontent.com/MarksCode/CM146-Final-Project/master/Obstacles.json';
     fetch(url)
-    .then(response => 
+    .then(response =>
         response.json().then(data => ({
             data: data,
             status: response.status
