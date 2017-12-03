@@ -5,6 +5,8 @@
 // @grant       GM_getResourceText
 // ==/UserScript==
 
+var obstacleData;   // data to be pulled in from Obstacles.json
+
 function waitForId(fn) {
     // Don't execute the function until tagpro.playerId has been assigned.
     if (!tagpro || !tagpro.playerId) {
@@ -23,7 +25,7 @@ function script() {
     var ctrl_period = 50;
     var counter = 0;
 
-    let startingPoints = preprocess();
+    let obstacles = preprocess();
 
     function create_decision_maker(me){
         var decision_maker = {};
@@ -79,6 +81,14 @@ function script() {
 
         // Here we decide what state, and what step of the state the bot should be in
         decision_maker.decide_role = function(){
+            for (let o in obstacles) {
+                let obstacle = obstacles[o];
+                let {x1, y1, x2, y2} = obstacle.dim;
+                if (this.me.x >= x1 && this.me.x <= x2 && this.me.y >= y1 && this.me.y <= y2) {  // We are inside an obstacle
+                    this.set_state(obstacle.name, 0);   // set state to be name of the obstacle
+                    return;
+                }
+            }
             this.set_state('follow', 0);
         }
 
@@ -122,9 +132,9 @@ function script() {
 }
 
 
-// Find all starting points for obstacles in maze
+// Find and preprocess all obstacles in maze
 function preprocess() {
-    let foundObstacles = {};
+    let obstacles = {};
     let obstacleStartingPoints = [];
     for (let i=0; i<tagpro.map.length; i++) {
         for (let y=0; y<tagpro.map[i].length; y++) {
@@ -132,7 +142,7 @@ function preprocess() {
                 obstacleStartingPoints.push([i, y]);
             }
         }
-    }
+    } 
     for (let point of obstacleStartingPoints) {
         let [i, y] = point;
         let config = [
@@ -140,19 +150,30 @@ function preprocess() {
             tagpro.map[i].slice(y-1, y+2).map(x => {return x === 9 ? 1 : 0}),
             tagpro.map[i+1].slice(y-1, y+2).map(x => {return x === 9 ? 1 : 0})
         ]
-        for (let key in obstacles) {
-            let obstcl = obstacles[key];
+        for (let key in obstacleData) {
+            let obstcl = obstacleData[key];
             var isSame = true;
             for (let a=0; a<3; a++) {
                 for (let b=0; b<3; b++) {
                     if (config[a][b] !== obstcl.config[a][b]) isSame = false;
                 }
             }
-            if (isSame) {
-                console.log(i, y, key);
+            if (isSame) {  // found the obstacle type
+                let obstclData = {};
+                obstclData.startLoc = point;  // start of maze
+                obstclData.dim = {
+                    x1: (i + obstcl.topLeftOffset[0]) * 40,   // top left of obstacle
+                    y1: (y + obstcl.topLeftOffset[1]) * 40,
+                    x2: (i + obstcl.botRightOffset[0]) * 40,  // bot right of obstacle
+                    y2: (y + obstcl.botRightOffset[1]) * 40
+                }
+                obstclData.name = obstcl.name;
+                obstacles[obstcl.name] = obstclData;
+                break;
             }
         }
     }
+    return obstacles;
 }
 
 tagpro.ready(function() {
@@ -164,7 +185,7 @@ tagpro.ready(function() {
             status: response.status
         })
     ).then(res => {
-        obstacles = res.data;
+        obstacleData = res.data;
         waitForId(script);
     }));
 });
