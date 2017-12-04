@@ -36,6 +36,7 @@ function script() {
         decision_maker.lastPlayerPos = {x: me.x, y: me.y, vx: -0, vy: -0};
         decision_maker.obsKey = '0';   // key of current obstacle
         decision_maker.obsData = {}    // data of current obstacle
+        decision_maker.debugr = create_debugger();
 
         decision_maker.decide = function(){
             this.decide_state();
@@ -100,6 +101,9 @@ function script() {
             if (Object.keys(target).length === 0) {   // target hasn't been set for some reason
                 target = {x: this.me.x, y: this.me.y, vx: -0, vy: -0};  // arbitrary default value
             }
+
+            // highlights
+            this.debugr.draw_point(target.x, target.y);
 
             return target;
         }
@@ -412,6 +416,20 @@ function create_controller(PIDconstants){
 
     controller.PID = create_PID(PIDconstants);
     return controller;
+}
+
+// draw a rectange on map at specified location
+function create_debugger() {
+    var debug = {};
+    var layer = tagpro.renderer.layers.foreground;
+    var point = new PIXI.Graphics();
+    layer.addChild(point);
+    debug.draw_point = function(x, y, size=5) {
+        point.clear();
+        point.lineStyle(2, 0xFF0000);
+        point.drawCircle(x, y, size);
+    }
+    return debug;
 }
 
 // removes the all tagpro rendering and suppresses errors to
