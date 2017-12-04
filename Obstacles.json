@@ -6,12 +6,12 @@
         "width": 9,
         "topLeftOffset": [-4, -14],
         "botRightOffset": [4, 0],
+        "goalOffset": [0, -15],
         "config": [
             [0, 0, 0],
             [0, 0, 0],
             [0, 0, 0]
-        ],
-        "goal": 14
+        ]
     },
     "1": {
         "key": "1",
@@ -20,12 +20,11 @@
         "width": 19,
         "topLeftOffset": [-9, 0],
         "botRightOffset": [9, 10],
+        "goalOffset": [0, 12],
         "config": [
             [1, 0, 1],
             [0, 0, 0],
             [1, 0, 1]
-        ],
-        "goal": 10
+        ]
     }
-
 }

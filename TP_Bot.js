@@ -26,16 +26,19 @@ function script() {
     var counter = 0;
 
     let obstacles = preprocess();
+    console.log(obstacles)
 
     function create_decision_maker(me){
         var decision_maker = {};
         decision_maker.me = me;
-        decision_maker.role = {};
+        decision_maker.role = {state: 'follow', step: 0};
         decision_maker.human = null; // will be set for caching
         decision_maker.lastPlayerPos = {x: me.x, y: me.y, vx: -0, vy: -0};
+        decision_maker.obsKey = '0';   // key of current obstacle
+        decision_maker.obsData = {}    // data of current obstacle
 
         decision_maker.decide = function(){
-            this.decide_role();
+            this.decide_state();
             return this.create_target();
         }
 
@@ -69,6 +72,9 @@ function script() {
                       this.lastPlayerPos = curPlayerPos;
                     }
                 }
+
+            } else if (this.role.state === 'Basic Button') {
+
             }
 
 
@@ -79,17 +85,36 @@ function script() {
             return target;
         }
 
-        // Here we decide what state, and what step of the state the bot should be in
-        decision_maker.decide_role = function(){
-            for (let o in obstacles) {
-                let obstacle = obstacles[o];
+        // Check if we've entered an obstacle
+        decision_maker.decide_state = function(){
+            if (this.role.state === 'follow') {
+                for (let o in obstacles) {
+                    let obstacle = obstacles[o];
+                    let {x1, y1, x2, y2} = obstacle.dim;
+                    if (this.me.x >= x1 && this.me.x <= x2 && this.me.y >= y1 && this.me.y <= y2) {  // We are inside an obstacle
+                        this.obsKey = o;
+                        this.obsData = obstacle;
+                        this.set_state(obstacle.name, 0);   // set state to be name of the obstacle
+                        return;
+                    }
+                }
+            } else {
+                this.decide_step();
+            }
+        }
+
+        // Were inside an obstacle. Decide if we've exited, otherwise decide step
+        decision_maker.decide_step = function(){
+            if (this.role.state === 'Basic Button') {
+                let obstacle = obstacles[this.obsKey];
                 let {x1, y1, x2, y2} = obstacle.dim;
-                if (this.me.x >= x1 && this.me.x <= x2 && this.me.y >= y1 && this.me.y <= y2) {  // We are inside an obstacle
-                    this.set_state(obstacle.name, 0);   // set state to be name of the obstacle
-                    return;
+                if (this.me.x < x1 || this.me.x > x2 || this.me.y < y1 || this.me.y > y2) {  // we're outside obstacle
+                    console.log("Hi")
+                    this.set_state('follow', 0);
+                } else {
+                    console.log(this.obsData.position);
                 }
             }
-            this.set_state('follow', 0);
         }
 
         // Helper function to set step, state the bot is in
@@ -161,6 +186,7 @@ function preprocess() {
             if (isSame) {  // found the obstacle type
                 let obstclData = {};
                 obstclData.startLoc = point;  // start of maze
+                obstclData.positions = {};
                 obstclData.dim = {
                     x1: (i + obstcl.topLeftOffset[0]) * 40,   // top left of obstacle
                     y1: (y + obstcl.topLeftOffset[1]) * 40,
@@ -169,6 +195,12 @@ function preprocess() {
                 }
                 obstclData.name = obstcl.name;
                 obstacles[obstcl.name] = obstclData;
+                if (obstclData.name === 'Basic Button') {
+                    obstclData.positions.gatePos = [point[0], point[1] - 8];
+                    obstclData.positions.button1 = [point[0] - 3, point[1] - 6];
+                    obstclData.positions.button2 = [point[0] + 3, point[1] - 10];
+                    obstclData.positions.goal = [point[0] + obstcl.goalOffset[0], point[1] + obstcl.goalOffset[1]];
+                }
                 break;
             }
         }
