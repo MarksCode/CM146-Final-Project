@@ -26,7 +26,7 @@ function script() {
     var counter = 0;
 
     let obstacles = preprocess();
-    console.log(obstacles)
+    // console.log(obstacles)
 
     function create_decision_maker(me){
         var decision_maker = {};
@@ -74,7 +74,26 @@ function script() {
                 }
 
             } else if (this.role.state === 'Basic Button') {
-
+                var x=this.me.x, y=this.me.y;
+                switch (this.role.step) {
+                    case 0:      // bot should go to button1
+                        x = this.obsData.positions.button1[0] * 40;
+                        y = this.obsData.positions.button1[1] * 40;
+                        break;
+                    case 1:      // bot should go to button2
+                        x = this.obsData.positions.button2[0] * 40;
+                        y = this.obsData.positions.button2[1] * 40;
+                        break;
+                    case 2:     // bot should wait
+                        break;
+                    case 3:     // bot should go to goal
+                        x = this.obsData.positions.goal[0] * 40;
+                        y = this.obsData.positions.goal[1] * 40;
+                        break;
+                    default:
+                        break;
+                }
+                target = {x: x, y: y, vx: -0, vy: -0};
             }
 
 
@@ -105,14 +124,40 @@ function script() {
 
         // Were inside an obstacle. Decide if we've exited, otherwise decide step
         decision_maker.decide_step = function(){
+            decision_maker.isOnTile
             if (this.role.state === 'Basic Button') {
                 let obstacle = obstacles[this.obsKey];
                 let {x1, y1, x2, y2} = obstacle.dim;
                 if (this.me.x < x1 || this.me.x > x2 || this.me.y < y1 || this.me.y > y2) {  // we're outside obstacle
-                    console.log("Hi")
                     this.set_state('follow', 0);
                 } else {
-                    console.log(this.obsData.position);
+                    let isHumanPastGate = this.human.y + 50 < this.obsData.positions.gatePos[1] * 40 ? true : false;
+                    let isBotPastGate = this.me.y + 50 < this.obsData.positions.gatePos[1] * 40 ? true : false;
+                    if (isHumanPastGate && isBotPastGate) {  // check if both players above gate
+                        this.set_state(this.role.state, 3);
+                    } else {
+                        let [i, y] = this.obsData.positions.gatePos;
+                        let isGateOpen = tagpro.map[i][y] === 9.1 ? false : true;
+                        if (!isGateOpen) {   // gate is not open
+                            if (!isHumanPastGate && !isBotPastGate) {  // human and bot both behind gate
+                                this.set_state(this.role.state, 0);
+                            } else if (isBotPastGate && !isHumanPastGate) { // bot ahead, human behind
+                                this.set_state(this.role.state, 1);
+                            } else {
+                                this.set_state(this.role.state, 2); // bot should wait for human to open gate
+                            }
+                        } else {
+                            if (this.isOnTile(false, this.obsData.positions.button2)) {  // human is on button 2
+                                this.set_state(this.role.state, 1);
+                            } else if (this.isOnTile(true, this.obsData.positions.button1)) { // bot is on button1, dont move
+                                this.set_state(this.role.state, 2);
+                            } else if (this.isOnTile(true, this.obsData.positions.button2)) { // bot is on button2
+                                this.set_state(this.role.state, 2);
+                            } else {
+                                this.set_state(this.role.state, 1);
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -121,6 +166,20 @@ function script() {
         decision_maker.set_state = function(state, step){
             this.role.state = state;
             this.role.step = step;
+        }
+
+        // decide if a player is sitting on a tile
+        // params:
+        //    bot: false = check if bot is on tile, true = check if human on tile
+        //    tile: [x, y] of tile
+        decision_maker.isOnTile = function(isBot, tile) {
+            var isOnTile = true;
+            let {x, y} = isBot ? this.me : this.human;  // x and y coords of player
+            let tx = tile[0] * 40;
+            let ty = tile[1] * 40;
+            // console.log('x: ', x, ' y: ', y, ' tx: ', tx, ' ty: ', ty);
+            if (x < tx || x > (tx+40) || y < ty || y > (ty+40)) isOnTile = false;
+            return isOnTile;
         }
 
         return decision_maker;
