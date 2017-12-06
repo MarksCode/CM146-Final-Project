@@ -2,7 +2,6 @@
 // @name        Labyrinth Bot
 // @version     0.1
 // @include     *.newcompte.fr:*
-// @grant       GM_getResourceText
 // ==/UserScript==
 
 var obstacleData;   // data to be pulled in from Obstacles.json
@@ -31,7 +30,7 @@ function script() {
     function create_decision_maker(me){
         var decision_maker = {};
         decision_maker.me = me;
-        decision_maker.role = {state: 'follow', step: 0};
+        decision_maker.role = {state: 'follow', step: 0, role: false};
         decision_maker.human = null; // will be set for caching
         decision_maker.lastPlayerPos = {x: me.x, y: me.y, vx: -0, vy: -0};
         decision_maker.obsKey = '0';   // key of current obstacle
@@ -117,7 +116,7 @@ function script() {
                     if (this.me.x >= x1 && this.me.x <= x2 && this.me.y >= y1 && this.me.y <= y2) {  // We are inside an obstacle
                         this.obsKey = o;
                         this.obsData = obstacle;
-                        this.set_state(obstacle.name, 0);   // set state to be name of the obstacle
+                        this.set_state(obstacle.name, 0, false);   // set state to be name of the obstacle
                         return;
                     }
                 }
@@ -128,48 +127,57 @@ function script() {
 
         // Were inside an obstacle. Decide if we've exited, otherwise decide step
         decision_maker.decide_step = function(){
-            decision_maker.isOnTile
             if (this.role.state === 'Basic Button') {
                 let obstacle = obstacles[this.obsKey];
                 let {x1, y1, x2, y2} = obstacle.dim;
                 if (this.me.x < x1 || this.me.x > x2 || this.me.y < y1 || this.me.y > y2) {  // we're outside obstacle
-                    this.set_state('follow', 0);
+                    this.set_state('follow', 0, false);
                 } else {
                     let isHumanPastGate = this.human.y + 50 < this.obsData.positions.gatePos[1] * 40 ? true : false;
                     let isBotPastGate = this.me.y + 50 < this.obsData.positions.gatePos[1] * 40 ? true : false;
                     if (isHumanPastGate && isBotPastGate) {  // check if both players above gate
-                        this.set_state(this.role.state, 3);
+                        this.set_state(this.role.state, 3, false);
                     } else {
                         let [i, y] = this.obsData.positions.gatePos;
                         let isGateOpen = tagpro.map[i][y] === 9.1 ? false : true;
                         if (!isGateOpen) {   // gate is not open
                             if (!isHumanPastGate && !isBotPastGate) {  // human and bot both behind gate
-                                this.set_state(this.role.state, 0);
+                                this.set_state(this.role.state, 0, false);
                             } else if (isBotPastGate && !isHumanPastGate) { // bot ahead, human behind
-                                this.set_state(this.role.state, 1);
+                                this.set_state(this.role.state, 1, false);
                             } else {
-                                this.set_state(this.role.state, 2); // bot should wait for human to open gate
+                                this.set_state(this.role.state, 2, false); // bot should wait for human to open gate
                             }
                         } else {
                             if (this.isOnTile(false, this.obsData.positions.button2)) {  // human is on button 2
-                                this.set_state(this.role.state, 1);
+                                this.set_state(this.role.state, 1, false);
                             } else if (this.isOnTile(true, this.obsData.positions.button1)) { // bot is on button1, dont move
-                                this.set_state(this.role.state, 2);
+                                this.set_state(this.role.state, 2, false);
                             } else if (this.isOnTile(true, this.obsData.positions.button2)) { // bot is on button2
-                                this.set_state(this.role.state, 2);
+                                this.set_state(this.role.state, 2, false);
                             } else {
-                                this.set_state(this.role.state, 1);
+                                this.set_state(this.role.state, 1, false);
                             }
                         }
                     }
+                }
+            } else if (this.role.state === 'Trust') {
+                if (this.human.flag || this.me.flag) {   // if either player has flag, go to goal
+                    this.set_state(this.role.state, 3, false); 
+                } else {
+                    if (this.role.step === 0) {
+                        this.set_state(this.role.state, 1, false);  // just entered obstacle, role to top
+                    } else if ()
+                    if (isOnTile(true, this.obsData.positions.waitPos2))
                 }
             }
         }
 
         // Helper function to set step, state the bot is in
-        decision_maker.set_state = function(state, step){
+        decision_maker.set_state = function(state, step, role){
             this.role.state = state;
             this.role.step = step;
+            this.role.role = role;
         }
 
         // decide if a player is sitting on a tile
@@ -178,7 +186,8 @@ function script() {
         //    tile: [x, y] of tile
         decision_maker.isOnTile = function(isBot, tile) {
             var isOnTile = true;
-            let {x, y} = isBot ? this.me : this.human;  // x and y coords of player
+            var {x, y} = isBot ? this.me : this.human;  // x and y coords of player
+            x+=20; y+=20;
             let tx = tile[0] * 40;
             let ty = tile[1] * 40;
             // console.log('x: ', x, ' y: ', y, ' tx: ', tx, ' ty: ', ty);
@@ -260,9 +269,18 @@ function preprocess() {
                 obstacles[obstcl.name] = obstclData;
                 if (obstclData.name === 'Basic Button') {
                     obstclData.positions.gatePos = [point[0], point[1] - 8];
-                    obstclData.positions.button1 = [point[0] - 3, point[1] - 6];
-                    obstclData.positions.button2 = [point[0] + 3, point[1] - 10];
+                    obstclData.positions.button1 = [point[0] - 2, point[1] - 5];
+                    obstclData.positions.button2 = [point[0] + 2, point[1] - 11];
                     obstclData.positions.goal = [point[0] + obstcl.goalOffset[0], point[1] + obstcl.goalOffset[1]];
+                }
+                if (obstclData.name === 'Trust') {
+                    obstclData.positions.waitPos2 = [point[0] + 7, point[1] + 7];   // left square next to boost
+                    obstclData.positions.waitPos1 = [point[0] - 7, point[1] + 7];   // right square next to boost
+                    obstclData.positions.topPos = [point[0], point[1] + 3];         // top of obstacle
+                    obstclData.positions.interPos2 = [point[0] + 7, point[1] + 4];  // top right of obstacle
+                    obstclData.positions.interPos1 = [point[0] - 7, point[1] + 4];  // top left of obstacle
+                    obstclData.positions.goal = [point[0] + obstcl.goalOffset[0], point[1] + obstcl.goalOffset[1]];
+                    obstclData.positions.bottom = {}
                 }
                 break;
             }
