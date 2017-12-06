@@ -167,8 +167,10 @@ function script() {
                 } else {
                     if (this.role.step === 0) {
                         this.set_state(this.role.state, 1, false);  // just entered obstacle, role to top
-                    } else if ()
-                    if (isOnTile(true, this.obsData.positions.waitPos2))
+                    }
+                    if (isOnTile(true, this.obsData.positions.waitPos2)) {
+                        
+                    }
                 }
             }
         }
@@ -187,7 +189,7 @@ function script() {
         decision_maker.isOnTile = function(isBot, tile) {
             var isOnTile = true;
             var {x, y} = isBot ? this.me : this.human;  // x and y coords of player
-            x+=20; y+=20;
+            x-=20; y-=20;
             let tx = tile[0] * 40;
             let ty = tile[1] * 40;
             // console.log('x: ', x, ' y: ', y, ' tx: ', tx, ' ty: ', ty);
