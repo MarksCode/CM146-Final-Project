@@ -21,8 +21,12 @@ function waitForId(fn) {
 }
 
 function script() {
-    var ctrl_period = 50;
-    var counter = 0;
+    let ctrl_period = 50;
+    let counter = 0;
+    let debugr = create_debugger(); // draws point of where bot is headed to
+    let buttonDist = 25;
+    let moveDist = 20;
+    let standDist = 3;
 
     let obstacles = preprocess();
     // console.log(obstacles)
@@ -31,11 +35,13 @@ function script() {
         var decision_maker = {};
         decision_maker.me = me;
         decision_maker.role = {state: 'follow', step: 0, role: false};
-        decision_maker.human = null; // will be set for caching
+        decision_maker.human = null;         // will be set for caching
         decision_maker.lastPlayerPos = {x: me.x, y: me.y, vx: -0, vy: -0};
-        decision_maker.obsKey = '0';   // key of current obstacle
-        decision_maker.obsData = {}    // data of current obstacle
-        decision_maker.debugr = create_debugger();
+        decision_maker.obsKey = '0';         // key of current obstacle
+        decision_maker.obsData = {}          // data of current obstacle
+        decision_maker.isAlongPath = false;  // keep track of if the bot is currently moving along a path
+        decision_maker.currTargetIndex = 0;  // current target on path
+        decision_maker.path = [];            // [[x1, y1], [x2, y2], ...] of path
 
         decision_maker.decide = function(){
             this.decide_state();
@@ -46,63 +52,69 @@ function script() {
         decision_maker.create_target = function(){
             var curPlayerPos = {};
             var target = this.lastPlayerPos;
-
-            if (this.role.state === 'follow') {    // bot should follow around human player
-                if (!this.human) {
-                    let humanPlayers = Object.keys(tagpro.players).filter(x => {
-                        return tagpro.players[x].name === "Player 1";   // Hardcoding that human player has to be named "Player 1"
-                    })
-                    if (humanPlayers.length > 0) {
-                        this.human = tagpro.players[humanPlayers[0]];
-                        this.lastPlayerPos = {
-                          x: this.human.x, y: this.human.y, vx: -0, vy: -0
-                        };    // initialize last and current player position once human player has been found
+            if (!this.isAlongPath) {
+                if (this.role.state === 'follow') {    // bot should follow around human player
+                    if (!this.human) {
+                        let humanPlayers = Object.keys(tagpro.players).filter(x => {
+                            return tagpro.players[x].name === "Player 1";   // Hardcoding that human player has to be named "Player 1"
+                        })
+                        if (humanPlayers.length > 0) {
+                            this.human = tagpro.players[humanPlayers[0]];
+                            this.lastPlayerPos = {
+                              x: this.human.x, y: this.human.y, vx: -0, vy: -0
+                            };    // initialize last and current player position once human player has been found
+                        }
                     }
-                }
-                if (this.human) {
-                  //get player's current position and compare it to the last recorded position
-                  //if the difference is >= the size of a ball, move the last recorded position and update it as the player's current position
-                    curPlayerPos = {
-                        x: this.human.x, y: this.human.y, vx: -0, vy: -0
-                    };
+                    if (this.human) {
+                      //get player's current position and compare it to the last recorded position
+                      //if the difference is >= the size of a ball, move the last recorded position and update it as the player's current position
+                        curPlayerPos = {
+                            x: this.human.x, y: this.human.y, vx: -0, vy: -0
+                        };
 
-                    var dist = Math.sqrt(Math.pow(curPlayerPos.x-this.lastPlayerPos.x, 2) + Math.pow(curPlayerPos.y-this.lastPlayerPos.y, 2));
-                    if (Math.abs(dist) >= 75){
-                      target = this.lastPlayerPos;
-                      this.lastPlayerPos = curPlayerPos;
+                        var dist = Math.sqrt(Math.pow(curPlayerPos.x-this.lastPlayerPos.x, 2) + Math.pow(curPlayerPos.y-this.lastPlayerPos.y, 2));
+                        if (Math.abs(dist) >= 75){
+                          target = this.lastPlayerPos;
+                          this.lastPlayerPos = curPlayerPos;
+                        }
                     }
+
+                } else if (this.role.state === 'Basic Button') {
+                    var x=this.me.x, y=this.me.y;
+                    switch (this.role.step) {
+                        case 0:      // bot should go to button1
+                            x = this.obsData.positions.button1[0] * 40;
+                            y = this.obsData.positions.button1[1] * 40;
+                            break;
+                        case 1:      // bot should go to button2
+                            x = this.obsData.positions.button2[0] * 40;
+                            y = this.obsData.positions.button2[1] * 40;
+                            break;
+                        case 2:     // bot should wait
+                            break;
+                        case 3:     // bot should go to goal
+                            x = this.obsData.positions.goal[0] * 40;
+                            y = this.obsData.positions.goal[1] * 40;
+                            break;
+                        default:
+                            break;
+                    }
+                    target = {x: x, y: y, vx: -0, vy: -0};
+                } else if (this.role.state === 'Trust') {
+                    let path = [];
+                    path.push(this.obsData.positions.topPos);
+                    path.push(this.obsData.positions.interPos1);
+                    path.push(this.obsData.positions.waitPos1);
+                    this.startPath(path);
                 }
-
-            } else if (this.role.state === 'Basic Button') {
-                var x=this.me.x, y=this.me.y;
-                switch (this.role.step) {
-                    case 0:      // bot should go to button1
-                        x = this.obsData.positions.button1[0] * 40;
-                        y = this.obsData.positions.button1[1] * 40;
-                        break;
-                    case 1:      // bot should go to button2
-                        x = this.obsData.positions.button2[0] * 40;
-                        y = this.obsData.positions.button2[1] * 40;
-                        break;
-                    case 2:     // bot should wait
-                        break;
-                    case 3:     // bot should go to goal
-                        x = this.obsData.positions.goal[0] * 40;
-                        y = this.obsData.positions.goal[1] * 40;
-                        break;
-                    default:
-                        break;
-                }
-                target = {x: x, y: y, vx: -0, vy: -0};
-            }
-
-
-            if (Object.keys(target).length === 0) {   // target hasn't been set for some reason
-                target = {x: this.me.x, y: this.me.y, vx: -0, vy: -0};  // arbitrary default value
+            } else {   // move along a path
+                this.moveAlongPath();
+                let [x, y] = this.path[this.currTargetIndex];
+                target = {x: x*40, y: y*40, vx: -0, vy: -0};
             }
 
             // highlights
-            this.debugr.draw_point(target.x, target.y);
+            debugr.draw_point(target.x, target.y);
 
             return target;
         }
@@ -149,11 +161,11 @@ function script() {
                                 this.set_state(this.role.state, 2, false); // bot should wait for human to open gate
                             }
                         } else {
-                            if (this.isOnTile(false, this.obsData.positions.button2)) {  // human is on button 2
+                            if (this.isOnTile(false, this.obsData.positions.button2, 30)) {  // human is on button 2
                                 this.set_state(this.role.state, 1, false);
-                            } else if (this.isOnTile(true, this.obsData.positions.button1)) { // bot is on button1, dont move
+                            } else if (this.isOnTile(true, this.obsData.positions.button1, 30)) { // bot is on button1, dont move
                                 this.set_state(this.role.state, 2, false);
-                            } else if (this.isOnTile(true, this.obsData.positions.button2)) { // bot is on button2
+                            } else if (this.isOnTile(true, this.obsData.positions.button2, 30)) { // bot is on button2
                                 this.set_state(this.role.state, 2, false);
                             } else {
                                 this.set_state(this.role.state, 1, false);
@@ -168,8 +180,8 @@ function script() {
                     if (this.role.step === 0) {
                         this.set_state(this.role.state, 1, false);  // just entered obstacle, role to top
                     }
-                    if (isOnTile(true, this.obsData.positions.waitPos2)) {
-                        
+                    if (this.isOnTile(true, this.obsData.positions.waitPos2)) {
+
                     }
                 }
             }
@@ -186,15 +198,39 @@ function script() {
         // params:
         //    bot: false = check if bot is on tile, true = check if human on tile
         //    tile: [x, y] of tile
-        decision_maker.isOnTile = function(isBot, tile) {
-            var isOnTile = true;
-            var {x, y} = isBot ? this.me : this.human;  // x and y coords of player
-            x-=20; y-=20;
+        //    dist = accuracy of check
+        decision_maker.isOnTile = function(isBot, tile, dist=3) {
+            let {x, y} = isBot ? this.me : this.human;  // x and y coords of player
+            x; y;
             let tx = tile[0] * 40;
             let ty = tile[1] * 40;
-            // console.log('x: ', x, ' y: ', y, ' tx: ', tx, ' ty: ', ty);
-            if (x < tx || x > (tx+40) || y < ty || y > (ty+40)) isOnTile = false;
-            return isOnTile;
+            let d = Math.sqrt(Math.pow(tx-x, 2) + Math.pow(ty-y, 2));
+            if (!isBot) console.log(d);
+            return d <= dist;
+        }
+
+        // start a path
+        decision_maker.startPath = function(path) {
+            this.path = path;
+            this.currTargetIndex = 0;
+            this.isAlongPath = true;
+        }
+
+        // move bot along a path
+        decision_maker.moveAlongPath = function() {
+            var dist = 30;
+            if (this.currTargetIndex == this.path.length - 1) {
+                    dist = 3;
+            }
+            let currTarget = this.path[this.currTargetIndex];
+            if (this.isOnTile(true, currTarget, dist)) {
+                this.currTargetIndex++;
+                if (this.currTargetIndex >= this.path.length) {  // finished the path!
+                    this.path = [];
+                    this.isAlongPath = false;
+                    this.currTargetIndex = 0;
+                }
+            }
         }
 
         return decision_maker;
@@ -274,15 +310,13 @@ function preprocess() {
                     obstclData.positions.button1 = [point[0] - 2, point[1] - 5];
                     obstclData.positions.button2 = [point[0] + 2, point[1] - 11];
                     obstclData.positions.goal = [point[0] + obstcl.goalOffset[0], point[1] + obstcl.goalOffset[1]];
-                }
-                if (obstclData.name === 'Trust') {
+                } else if (obstclData.name === 'Trust') {
                     obstclData.positions.waitPos2 = [point[0] + 7, point[1] + 7];   // left square next to boost
                     obstclData.positions.waitPos1 = [point[0] - 7, point[1] + 7];   // right square next to boost
                     obstclData.positions.topPos = [point[0], point[1] + 3];         // top of obstacle
                     obstclData.positions.interPos2 = [point[0] + 7, point[1] + 4];  // top right of obstacle
                     obstclData.positions.interPos1 = [point[0] - 7, point[1] + 4];  // top left of obstacle
                     obstclData.positions.goal = [point[0] + obstcl.goalOffset[0], point[1] + obstcl.goalOffset[1]];
-                    obstclData.positions.bottom = {}
                 }
                 break;
             }
