@@ -42,6 +42,7 @@ function script() {
         decision_maker.isAlongPath = false;  // keep track of if the bot is currently moving along a path
         decision_maker.currTargetIndex = 0;  // current target on path
         decision_maker.path = [];            // [[x1, y1], [x2, y2], ...] of path
+        decision_maker.startedPath = false;
 
         decision_maker.decide = function(){
             this.decide_state();
@@ -56,7 +57,7 @@ function script() {
                 if (this.role.state === 'follow') {    // bot should follow around human player
                     if (!this.human) {
                         let humanPlayers = Object.keys(tagpro.players).filter(x => {
-                            return tagpro.players[x].name === "Player 1";   // Hardcoding that human player has to be named "Player 1"
+                            return tagpro.players[x].name === 'Player 1';   // Hardcoding that human player has to be named 'Player 1'
                         })
                         if (humanPlayers.length > 0) {
                             this.human = tagpro.players[humanPlayers[0]];
@@ -101,16 +102,34 @@ function script() {
                     }
                     target = {x: x, y: y, vx: -0, vy: -0};
                 } else if (this.role.state === 'Trust') {
-                    let path = [];
-                    path.push(this.obsData.positions.topPos);
-                    path.push(this.obsData.positions.interPos1);
-                    path.push(this.obsData.positions.waitPos1);
-                    this.startPath(path);
+                    var x=this.mex, y=this.me.y;
+                    switch (this.role.step) {
+                        case 0:      // bot should go to waiting area
+                            let path = [];
+                            path.push(this.obsData.positions.topPos);
+                            path.push(this.obsData.positions.interPos1);
+                            path.push(this.obsData.positions.waitPos1);
+                            this.startedPath = true;
+                            this.startPath(path);
+                            break;
+                        case 1:      // waiting on boost
+                            target = {x: this.me.x, y: this.me.y, vx: -this.human.vx, xy: 0};
+                            break;
+                        case 2:
+                            target = {x: this.obsData.positions.goal[0]*40, y: this.obsData.positions.goal[1]*40, vx: -this.human.vx, xy: 0};
+                            break;
+                        default:
+                            break;
+                    }
                 }
             } else {   // move along a path
-                this.moveAlongPath();
-                let [x, y] = this.path[this.currTargetIndex];
-                target = {x: x*40, y: y*40, vx: -0, vy: -0};
+                let isDone = this.moveAlongPath();
+                if (!isDone) {
+                    var [x, y] = this.path[this.currTargetIndex];
+                    target = {x: x*40, y: y*40, vx: -0, vy: -0};
+                } else {
+                    console.log("ALLL DDOOONE");
+                }
             }
 
             // highlights
@@ -139,8 +158,8 @@ function script() {
 
         // Were inside an obstacle. Decide if we've exited, otherwise decide step
         decision_maker.decide_step = function(){
+            let obstacle = obstacles[this.obsKey];
             if (this.role.state === 'Basic Button') {
-                let obstacle = obstacles[this.obsKey];
                 let {x1, y1, x2, y2} = obstacle.dim;
                 if (this.me.x < x1 || this.me.x > x2 || this.me.y < y1 || this.me.y > y2) {  // we're outside obstacle
                     this.set_state('follow', 0, false);
@@ -161,11 +180,11 @@ function script() {
                                 this.set_state(this.role.state, 2, false); // bot should wait for human to open gate
                             }
                         } else {
-                            if (this.isOnTile(false, this.obsData.positions.button2, 30)) {  // human is on button 2
+                            if (this.isOnTile(false, this.obsData.positions.button2, 25)) {  // human is on button 2
                                 this.set_state(this.role.state, 1, false);
-                            } else if (this.isOnTile(true, this.obsData.positions.button1, 30)) { // bot is on button1, dont move
+                            } else if (this.isOnTile(true, this.obsData.positions.button1, 25)) { // bot is on button1, dont move
                                 this.set_state(this.role.state, 2, false);
-                            } else if (this.isOnTile(true, this.obsData.positions.button2, 30)) { // bot is on button2
+                            } else if (this.isOnTile(true, this.obsData.positions.button2, 25)) { // bot is on button2
                                 this.set_state(this.role.state, 2, false);
                             } else {
                                 this.set_state(this.role.state, 1, false);
@@ -175,13 +194,13 @@ function script() {
                 }
             } else if (this.role.state === 'Trust') {
                 if (this.human.flag || this.me.flag) {   // if either player has flag, go to goal
-                    this.set_state(this.role.state, 3, false); 
+                    this.set_state(this.role.state, 2, false); 
                 } else {
                     if (this.role.step === 0) {
-                        this.set_state(this.role.state, 1, false);  // just entered obstacle, role to top
-                    }
-                    if (this.isOnTile(true, this.obsData.positions.waitPos2)) {
-
+                        if (this.startedPath && !this.isAlongPath) {
+                            this.startedPath = false;
+                            this.set_state(obstacle.name, 1, false);
+                        }
                     }
                 }
             }
@@ -205,7 +224,6 @@ function script() {
             let tx = tile[0] * 40;
             let ty = tile[1] * 40;
             let d = Math.sqrt(Math.pow(tx-x, 2) + Math.pow(ty-y, 2));
-            if (!isBot) console.log(d);
             return d <= dist;
         }
 
@@ -229,8 +247,10 @@ function script() {
                     this.path = [];
                     this.isAlongPath = false;
                     this.currTargetIndex = 0;
+                    return true;
                 }
             }
+            return false;
         }
 
         return decision_maker;
@@ -311,8 +331,8 @@ function preprocess() {
                     obstclData.positions.button2 = [point[0] + 2, point[1] - 11];
                     obstclData.positions.goal = [point[0] + obstcl.goalOffset[0], point[1] + obstcl.goalOffset[1]];
                 } else if (obstclData.name === 'Trust') {
-                    obstclData.positions.waitPos2 = [point[0] + 7, point[1] + 7];   // left square next to boost
-                    obstclData.positions.waitPos1 = [point[0] - 7, point[1] + 7];   // right square next to boost
+                    obstclData.positions.waitPos2 = [point[0] + 8, point[1] + 7]; // left square next to boost
+                    obstclData.positions.waitPos1 = [point[0] - 8, point[1] + 7]; // right square next to boost
                     obstclData.positions.topPos = [point[0], point[1] + 3];         // top of obstacle
                     obstclData.positions.interPos2 = [point[0] + 7, point[1] + 4];  // top right of obstacle
                     obstclData.positions.interPos1 = [point[0] - 7, point[1] + 4];  // top left of obstacle
@@ -364,18 +384,18 @@ function create_controller(PIDconstants){
     controller.output.horz = function(x,me){
         // left/right control
         if (x > this.threshold) { // go right
-            tagpro.sendKeyPress("left", true);
-            tagpro.sendKeyPress("right", false);
+            tagpro.sendKeyPress('left', true);
+            tagpro.sendKeyPress('right', false);
             me.right = true;
             me.left = false;
         } else if (x < -this.threshold) { // go left
-            tagpro.sendKeyPress("right", true);
-            tagpro.sendKeyPress("left", false);
+            tagpro.sendKeyPress('right', true);
+            tagpro.sendKeyPress('left', false);
             me.right = false;
             me.left = true;
         } else { // release both
-            tagpro.sendKeyPress("right", true);
-            tagpro.sendKeyPress("left", true);
+            tagpro.sendKeyPress('right', true);
+            tagpro.sendKeyPress('left', true);
             me.right = false;
             me.left = false;
         }
@@ -384,18 +404,18 @@ function create_controller(PIDconstants){
     controller.output.vert = function(y,me){
         // up/down control
         if (y < -this.threshold) { // go down
-            tagpro.sendKeyPress("up", true);
-            tagpro.sendKeyPress("down", false);
+            tagpro.sendKeyPress('up', true);
+            tagpro.sendKeyPress('down', false);
             me.up = false;
             me.down = true;
         } else if (y > this.threshold) { // go up
-            tagpro.sendKeyPress("up", false);
-            tagpro.sendKeyPress("down", true);
+            tagpro.sendKeyPress('up', false);
+            tagpro.sendKeyPress('down', true);
             me.up = true;
             me.down = false;
         } else { // release both
-            tagpro.sendKeyPress("up", true);
-            tagpro.sendKeyPress("down", true);
+            tagpro.sendKeyPress('up', true);
+            tagpro.sendKeyPress('down', true);
             me.up = false;
             me.down = false;
         }
