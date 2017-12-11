@@ -103,7 +103,6 @@ function script() {
                     }
                     target = {x: x, y: y, vx: -0, vy: -0};
                 } else if (this.role.state === 'Trust') {
-                    var x=this.mex, y=this.me.y;
                     switch (this.role.step) {
                         case 0:      // bot should go to waiting area
                             let path = [];
@@ -122,6 +121,31 @@ function script() {
                         default:
                             break;
                     }
+                } else if (this.role.state === 'Mars') {
+                    var x=this.me.x, y=this.me.y;
+                    switch (this.role.step) {
+                        case 0:      // bot should go to waiting area
+                            let path = [];
+                            path.push(this.obsData.positions.waitPos1);
+                            path.push(this.obsData.positions.portal1);
+                            path.push(this.obsData.positions.waitPos2);
+                            this.startedPath = true;
+                            this.startPath(path);
+                            break;
+                        case 1:      // stay in place and wait for mars ball
+                            break;
+                        case 2:      // bomb!
+                            x = this.obsData.positions.button[0] * 40;
+                            y = this.obsData.positions.button[1] * 40;
+                            break;
+                        case 3:
+                            x = this.obsData.positions.goal[0] * 40;
+                            y = this.obsData.positions.goal[1] * 40;
+                            break;
+                        default:
+                            break;
+                    }
+                    target = {x: x, y: y, vx: -0, vy: -0};
                 }
             } else {   // move along a path
                 let isDone = this.moveAlongPath();
@@ -196,10 +220,27 @@ function script() {
                     this.set_state(this.role.state, 2, false); 
                 } else if (this.role.step !== 2) {
                     if (this.role.step === 0) {    // start of obstacle, go to waiting spot 
-                        if (this.startedPath && !this.isAlongPath) {      // finished path, moment of truth 
+                        if (this.startedPath && !this.isAlongPath) {  // finished path, moment of truth 
                             this.startedPath = false;
                             this.set_state(obstacle.name, 1, false);
                         }
+                    }
+                }
+            } else if (this.role.state === 'Mars') {
+                if (this.role.step === 0) {
+                    if (this.startedPath && !this.isAlongPath) {  // finished path
+                        this.startedPath = false;
+                        this.set_state(obstacle.name, 1, false);
+                    }
+                } else if (this.role.step === 1) {
+                    let marsBall = tagpro.objects[0];
+                    let x1 = this.obsData.positions.marsRange1[0] * 40;
+                    if (marsBall && marsBall.x > x1) {   // check if mars ball is in correct position
+                        this.set_state(obstacle.name, 2, false);
+                    }
+                } else if (this.role.step === 2) {   // wait for human to cross gate
+                    if (this.human.x > this.obsData.positions.marsRange1[0] * 40) {
+                        this.set_state(obstacle.name, 3, false);
                     }
                 }
             }
@@ -322,21 +363,26 @@ function preprocess() {
                     x2: (i + obstcl.botRightOffset[0]) * 40,  // bot right of obstacle
                     y2: (y + obstcl.botRightOffset[1]) * 40
                 }
+                obstclData.positions.goal = [point[0] + obstcl.goalOffset[0], point[1] + obstcl.goalOffset[1]];
                 obstclData.name = obstcl.name;
                 if (obstclData.name === 'Basic Button') {
                     obstclData.positions.gatePos = [point[0], point[1] - 8];
                     obstclData.positions.button1 = [point[0] - 2, point[1] - 5];
                     obstclData.positions.button2 = [point[0] + 2, point[1] - 11];
-                    obstclData.positions.goal = [point[0] + obstcl.goalOffset[0], point[1] + obstcl.goalOffset[1]];
                 } else if (obstclData.name === 'Trust') {
                     obstclData.positions.waitPos2 = [point[0] + 8, point[1] + 7]; // left square next to boost
                     obstclData.positions.waitPos1 = [point[0] - 8, point[1] + 7]; // right square next to boost
                     obstclData.positions.topPos = [point[0], point[1] + 3];         // top of obstacle
                     obstclData.positions.interPos2 = [point[0] + 7, point[1] + 4];  // top right of obstacle
                     obstclData.positions.interPos1 = [point[0] - 7, point[1] + 4];  // top left of obstacle
-                    obstclData.positions.goal = [point[0] + obstcl.goalOffset[0], point[1] + obstcl.goalOffset[1]];
-                } else if (obstacleData.name === 'Mars') {
-
+                } else if (obstclData.name === 'Mars') {
+                    obstclData.positions.portal1 = [point[0] + 4.2, point[1] - 2.2];  // top portal
+                    obstclData.positions.portal2 = [point[0] + 4.2, point[1] + 2];  // bottom portal
+                    obstclData.positions.waitPos1 = [point[0] + 3, point[1]];     // before portals
+                    obstclData.positions.waitPos2 = [point[0] + 27, point[1]];    // underneath button
+                    obstclData.positions.button = [point[0] + 27, point[1] - 2];  // button
+                    obstclData.positions.marsRange1 = [point[0] + 25, point[1]];  // left most of where mars ball should end up
+                    obstclData.positions.marsRange2 =  [point[0] + 27, point[1]];  // right most of where mars ball should end up
                 }
                 obstacles[obstcl.name] = obstclData;
                 break;

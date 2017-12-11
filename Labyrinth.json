@@ -1,216 +1,761 @@
-{
-  "info": {
-    "name": "Labyrinth",
-    "author": "146 Crew",
-    "gameMode": "normal"
-  },
-  "switches": {
-    "5,13": {
-      "toggle": [
-        {
-          "pos": {
-            "x": 5,
-            "y": 10
-          }
-        },
-        {
-          "pos": {
-            "x": 6,
-            "y": 10
-          }
-        },
-        {
-          "pos": {
-            "x": 7,
-            "y": 10
-          }
-        },
-        {
-          "pos": {
-            "x": 8,
-            "y": 10
-          }
-        },
-        {
-          "pos": {
-            "x": 9,
-            "y": 10
-          }
-        }
-      ],
-      "timer": 0
-    },
-    "9,7": {
-      "toggle": [
-        {
-          "pos": {
-            "x": 5,
-            "y": 10
-          }
-        },
-        {
-          "pos": {
-            "x": 6,
-            "y": 10
-          }
-        },
-        {
-          "pos": {
-            "x": 7,
-            "y": 10
-          }
-        },
-        {
-          "pos": {
-            "x": 8,
-            "y": 10
-          }
-        },
-        {
-          "pos": {
-            "x": 9,
-            "y": 10
-          }
-        }
-      ],
-      "timer": 0
-    },
-    "42,48": {
-      "toggle": [
-        {
-          "pos": {
-            "x": 39,
-            "y": 52
-          }
-        },
-        {
-          "pos": {
-            "x": 39,
-            "y": 53
-          }
-        },
-        {
-          "pos": {
-            "x": 39,
-            "y": 54
-          }
-        },
-        {
-          "pos": {
-            "x": 42,
-            "y": 47
-          }
-        }
-      ],
-      "timer": 0
-    }
-  },
-  "fields": {
-    "5,10": {
-      "defaultState": "on"
-    },
-    "6,10": {
-      "defaultState": "on"
-    },
-    "7,10": {
-      "defaultState": "on"
-    },
-    "8,10": {
-      "defaultState": "on"
-    },
-    "9,10": {
-      "defaultState": "on"
-    },
-    "14,50": {
-      "defaultState": "off"
-    },
-    "15,49": {
-      "defaultState": "off"
-    },
-    "15,51": {
-      "defaultState": "off"
-    },
-    "16,50": {
-      "defaultState": "off"
-    },
-    "27,14": {
-      "defaultState": "off"
-    },
-    "27,16": {
-      "defaultState": "off"
-    },
-    "29,14": {
-      "defaultState": "off"
-    },
-    "29,16": {
-      "defaultState": "off"
-    },
-    "39,52": {
-      "defaultState": "on"
-    },
-    "39,53": {
-      "defaultState": "on"
-    },
-    "39,54": {
-      "defaultState": "on"
-    }
-  },
-  "portals": {
-    "20,48": {
-      "destination": {
-        "x": 25,
-        "y": 48
-      },
-      "cooldown": 0
-    },
-    "20,52": {
-      "destination": {
-        "x": 25,
-        "y": 52
-      },
-      "cooldown": 0
-    },
-    "23,22": {
-      "destination": {
-        "x": 25,
-        "y": 22
-      },
-      "cooldown": 0
-    },
-    "25,22": {},
-    "25,48": {},
-    "25,52": {},
-    "31,22": {},
-    "33,22": {
-      "destination": {
-        "x": 31,
-        "y": 22
-      },
-      "cooldown": 0
-    }
-  },
-  "marsballs": [
-    {
-      "y": 53,
-      "x": 33
-    }
-  ],
-  "spawnPoints": {
-    "red": [
-      {
-        "x": 12,
-        "y": 50,
-        "radius": 1,
-        "weight": 1
-      }
-    ],
-    "blue": [
-      {
-        "x": 11,
-        "y": 50,
-        "radius": 1,
-        "weight": 1
-      }
-    ]
-  }
-}
+
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        <title>  - SomeBot!</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="shortcut icon" href="/static/images/favicon.ico">
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+        <link href="/static/css/dropzone.css" rel="stylesheet">
+        <link href="/static/css/style.css" rel="stylesheet">
+
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+        <!-- Include all compiled plugins (below), or include individual files as needed -->
+        <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+          <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+          <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+    </head>
+	<body>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a href="/" class="navbar-brand">SomeBot's Brain!</a>
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="hidden-md hidden-lg nav navbar-nav navbar-left">
+                    <li class="dropdown">
+                      <a href="#" class="dropdown-toggle" data-toggle="dropdown">Maps<span class="caret"></span></a>
+                      <ul class="dropdown-menu inverse-dropdown" role="menu">
+                          
+        <li id="index" ><a href="/">Recent Maps</a></li>
+    
+        <li id="editor"  class="active"><a href="/editor">Map Editor</a></li>
+    
+        <li id="" ><a href="http://www.reddit.com/r/tagpromapsharing">/r/tagpromapsharing</a></li>
+    
+
+                      </ul>
+                    </li>
+                </ul>
+                <ul class="hidden-sm hidden-xs nav navbar-nav navbar-left">
+                    
+        <li id="index" ><a href="/">Recent Maps</a></li>
+    
+        <li id="editor"  class="active"><a href="/editor">Map Editor</a></li>
+    
+        <li id="" ><a href="http://www.reddit.com/r/tagpromapsharing">/r/tagpromapsharing</a></li>
+    
+
+                    <li class="dropdown ">
+                        <a href="/top/7" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Top <span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="/top/1">Day</a></li>
+                            <li><a href="/top/7">Week</a></li>
+                            <li><a href="/top/30">Month</a></li>
+                            <li><a href="/top/90">3 Months</a></li>
+                            <li><a href="/top/365">Year</a></li>
+                      </ul>
+                  </li>
+
+                    <li class="dropdown ">
+                        <a href="/top/7?tested=true" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Tested <span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="/top/1?tested=true">Day</a></li>
+                            <li><a href="/top/7?tested=true">Week</a></li>
+                            <li><a href="/top/30?tested=true">Month</a></li>
+                            <li><a href="/top/90?tested=true">3 Months</a></li>
+                            <li><a href="/top/365?tested=true">Year</a></li>
+                      </ul>
+                  </li>
+                </ul>
+
+                <ul class="nav navbar-nav navbar-right">
+                    
+                    <li>
+                        <a href="/login" title="log in"><span class="glyphicon glyphicon-log-in"></span></a>
+                    </li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid" >
+                
+
+  
+    <div id="tiles" url="url('/static/textures/Vanilla/tiles.png')" hidden></div>
+  
+    <div id="speedpad" url="url('/static/textures/Vanilla/speedpad.png')" hidden></div>
+  
+    <div id="speedpadblue" url="url('/static/textures/Vanilla/speedpadblue.png')" hidden></div>
+  
+    <div id="speedpadred" url="url('/static/textures/Vanilla/speedpadred.png')" hidden></div>
+  
+    <div id="portal" url="url('/static/textures/Vanilla/portal.png')" hidden></div>
+  
+    <div id="gravitywell" url="url('/static/textures/Vanilla/gravitywell.png')" hidden></div>
+  
+    <div id="walltiles" url="url('/static/tagpro-map-editor/default-skin-v2.png')" hidden></div>
+  
+  
+    <title>TagPro Map Editor</title>
+    <script src="/static/tagpro-map-editor/generatepng.js"></script>
+    <script src="/static/tagpro-map-editor/webtoolkit.base64.js"></script>
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/tagpro-map-editor/css/style.css">
+		
+  <div style="position:fixed;left:0;top:51px;bottom:0;width:320px;overflow-y:scroll;overflow-x:hidden;padding:10px 5px;">
+    <div class="form-group">
+      <div class="btn-group btn-group-justified">
+        <div>
+          <button class="btn btn-default btn-block" data-target="#instructions" data-toggle="modal"><span class="glyphicon glyphicon-info-sign"></span> Instructions</button>
+        </div>
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="btn-group btn-group-justified">
+        <div class="btn-group">
+          <button id='clear' class='btn btn-default' title="Clear map"><span class="glyphicon glyphicon-remove"></span> Clear</button>
+        </div>
+        <div class="btn-group">
+          <button id="save" class="btn btn-default" title="Save Map" data-target="#saveDialog" data-toggle="modal"><span class="glyphicon glyphicon-floppy-disk"></span> Load/Save</button>
+        </div>
+        <div class="btn-group" style="position:static;">
+          <button class='btn btn-default' title="Test Map" style="border-top-right-radius:4px;border-bottom-right-radius:4px;" data-toggle="dropdown"><span class="glyphicon glyphicon-play"></span> Test <span class="caret"></span></button>
+          <ul class="dropdown-menu" style="margin-top: 35px;top:auto;right:0;left:auto;text-align:right;" role="menu">
+            <li><a id='test' href="#" style="overflow:hidden;text-overflow:ellipsis;">North American Server</a></li>
+            <li><a id='testeu' href="#" style="overflow:hidden;text-overflow:ellipsis;">European Server</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="row">
+        <div class="col-xs-4">
+          <div id="undoRedo" class="btn-group btn-group-justified" role="toolbar">
+            <a id="undo" class="btn btn-default" title="Undo"><span class="glyphicon glyphicon-flipped glyphicon-share-alt"></span></a>
+            <a id="redo" class="btn btn-default" title="Redo"><span class="glyphicon glyphicon-share-alt"></span></a>
+          </div>
+        </div>
+
+        <div class="col-xs-4">
+          <div id="zoom" class="btn-group btn-group-justified" role="toolbar">
+            <a id="zoomOut" class="btn btn-default" title="Zoom Out"><span class="glyphicon glyphicon-zoom-out"></span></a>
+            <a id="zoomIn" class="btn btn-default" title="Zoom In"><span class="glyphicon glyphicon-zoom-in"></span></a>
+          </div>
+        </div>
+
+        <div class="col-xs-4">
+          <button class="btn btn-default btn-block" title="Import/Export Map" data-target="#importExport" data-toggle="modal">
+            <span class="glyphicon glyphicon-import"></span> / <span class="glyphicon glyphicon-export"></span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="input-group">
+        <span class="input-group-addon">Map Size:</span>
+        <label class="form-control" id="resizeWidth">20</label>
+        <span class="input-group-addon">by</span>
+        <label class="form-control" id="resizeHeight">20</label>
+        <span class="input-group-btn">
+          <button id="resize" class="btn btn-default" title="Resize" style="padding: 6px 10px;" type="button" data-toggle="modal" data-target="#resizeDialog">
+            <span class="glyphicon glyphicon-resize-full"></span>
+          </button>
+          <button id="addWidth" class="btn btn-default" title="Add Columns" style="padding: 6px 10px;">
+            <span class="glyphicon glyphicon-resize-horizontal"></span>
+          </button>
+          <button id="addHeight" class="btn btn-default" title="Add Rows" style="padding: 6px 10px;">
+            <span class="glyphicon glyphicon-resize-vertical"></span>
+          </button>
+        </span>
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <div class="row">
+        <div class="col-xs-4">
+          <div id="rotate" class="btn-group btn-group-justified" role="toolbar">
+            <a id="rotateLeft" class="btn btn-default" title="Rotate Left"><span class="glyphicon glyphicon-flipped glyphicon-retweet"></span></a>
+            <a id="rotateRight" class="btn btn-default" title="Rotate Right"><span class="glyphicon glyphicon-retweet"></span></a>
+          </div>
+        </div>
+
+        <div class="col-xs-4">
+          <div id="flip" class="btn-group btn-group-justified" role="toolbar">
+            <a id="flipVertical" class="btn btn-default" title="Flip Vertical"><span class="glyphicon glyphicon-sort"></span></a>
+            <a id="flipHorizontal" class="btn btn-default" title="Flip Horizontal"><span class="glyphicon glyphicon-rotate-right glyphicon-sort"></span></a>
+          </div>
+        </div>
+
+        <div class="col-xs-4">
+          <div id="mirrorMap" class="btn-group btn-group-justified" role="toolbar">
+            <a id="mirror" class="btn btn-default" title="Mirror Map" type="button" data-toggle="modal" data-target="#mirrorOptions"><span class="glyphicon glyphicon-rotate-right glyphicon-sound-stereo"></span> / <span class="glyphicon glyphicon-sound-stereo"></span></a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group" style="margin-bottom: 5px;">
+      <div id="tools" role="toolbar">
+        <div class="btn-group btn-group-justified">
+          <a id="toolPencil" class="btn btn-default btn-sm" title="Pencil"><span class="glyphicon glyphicon-pencil off-center"></span></a>
+
+          <a id="toolBrush" class="btn btn-default btn-sm" title="Brush"><span class="glyphicon glyphicon-th-large off-center"></span></a>
+
+          <a id="toolLine" class="btn btn-default btn-sm" title="Line"><span class="glyphicon glyphicon-minus off-center"></span></a>
+
+          <a id="toolRectFill" class="btn btn-default btn-sm" title="Filled Rectangle"><span class="glyphicon glyphicon-stop off-center"></span></a>
+
+          <a id="toolRectOutline" class="btn btn-default btn-sm" title="Outlined Rectange"><span class="glyphicon glyphicon-unchecked off-center"></span></a>
+
+          <a id="toolCircleFill" class="btn btn-default btn-sm" title="Filled Circle"><span class="glyphicon glyphicon-record off-center"></span></a>
+
+          <a id="toolCircleOutline" class="btn btn-default btn-sm" title="Outlined Circle"><span class="glyphicon glyphicon-remove-circle off-center"></span></a>
+
+          <a id="toolFill" class="btn btn-default btn-sm" title="Fill"><span class="glyphicon glyphicon-tint off-center"></span></a>
+
+          <a id="toolWire" class="btn btn-default btn-sm" title="Wire"><span class="glyphicon glyphicon-wrench off-center"></span></a>
+          
+          <a id="toolClipboard" class="btn btn-default btn-sm" title="Cut/Copy and Paste"><span class="glyphicon glyphicon-folder-close off-center"></span></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <select id="symmetry" class="form-control">
+        <option selected>No Symmetry</option>
+        <option value="Horizontal">Horizontal Symmetry</option>
+        <option value="Vertical">Vertical Symmetry</option>
+        <option value="4-Way">4-Way Symmetry</option>
+        <option value="Rotational">Rotational Symmetry</option>
+      </select>
+    </div>
+
+    <div id="palette">
+    </div>
+  
+    <p>Forked from <a href="https://github.com/PeterReid/tagpro-map-editor">PeterReid</a></p>
+    <p><a href="https://github.com/steppin/tagpro-map-editor">Source</a></p>
+    </div>
+
+  </div>
+
+  <div style='position:fixed;top:51px;bottom:0;right:0;left:320px;overflow: scroll;white-space: nowrap;' id='map'>
+  </div>
+
+  <canvas width="200" height="200" id='importCanvas' style='display:none'></canvas>
+
+  <div class="modal fade" id="importExport" tabindex="-1" role="dialog" aria-labelledby="importExportLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title" id="importExportLabel">Import/Export Map</h4>
+        </div>
+
+        <div class="modal-body">
+          <p>To import a map, drag and drop its .png and .json files into their respective areas and then click Import.</p>
+          <p>To export a map, click Export and then click the PNG and JSON buttons to download the files.</p>
+          <div class="form-group">
+            <div class="row">
+              <div class="col-xs-6">
+                <a class="dropArea" draggable="true" id="pngDrop" download="map.png" href="#">PNG</a>
+              </div>
+              <div class="col-xs-6">
+                <a class="dropArea" draggable="true" id="jsonDrop" download="map.json" href="#">JSON</a>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="btn-group btn-group-justified">
+              <a id="import" class="btn btn-default" title="Import map"><span class="glyphicon glyphicon-import"></span> Import</a>
+              <a id="export" class="btn btn-default" title="Export map"><span class="glyphicon glyphicon-export"></span> Export</a>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="gameMode">Game Mode</label>
+            <label class="radioLabel">
+              <input type="radio" name="gameMode" class="form-control" id="normalMode" value="normal" checked /><span class="radioSpan">Normal</span>
+            </label>
+            <label class="radioLabel">
+              <input type="radio" name="gameMode" class="form-control" id="gravityMode" value="gravity"><span class="radioSpan">Gravity</span>
+            </label>
+            <label class="radioLabel">
+              <input type="radio" name="gameMode" class="form-control" id="gravityCTFMode" value="gravityCTF"><span class="radioSpan">GravityCTF</spawn>
+            </label>
+          </div>
+          <div class="form-group">
+            <label for="mapName">Map Name</label>
+            <input type="text" class="form-control" id="mapName" placeholder="Untitled">
+          </div>
+          <div class="form-group">
+            <label for="author">Map Author</label>
+            <input type="text" class="form-control" id="author" placeholder="Anonymous">
+          </div>
+        </div>
+
+        <div class="modal-footer">
+					<button type="button" id="saveToJJ" class="btn btn-primary btn-success">Save to JJ</button>
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  
+  <div class="modal fade" id="saveDialog" tabindex="-1" role="dialog" aria-labelledby="saveLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title" id="saveLabel">Load/Save Maps</h4>
+        </div>
+        <div class="modal-body" style="text-align: center;">
+          <div class="slot empty" id="slot1">
+            <div>
+              <h4><p style="color: #888;">Empty</p></h4>
+              <p></p>
+            </div>
+            <div style="margin-left: auto;">
+              <button type="button" class="btn btn-info disabled">Download png</button>
+              <button type="button" class="btn btn-info disabled">Download json</button>
+            </div>
+          </div>
+          <div class="slot empty" id="slot2">
+            <div>
+              <h4><p style="color: #888;">Empty</p></h4>
+              <p></p>
+            </div>
+            <div style="margin-left: auto;">
+              <button type="button" class="btn btn-info disabled">Download png</button>
+              <button type="button" class="btn btn-info disabled">Download json</button>
+            </div>
+          </div>
+          <div class="slot empty" id="slot3">
+            <div>
+              <h4><p style="color: #888;">Empty</p></h4>
+              <p></p>
+            </div>
+            <div style="margin-left: auto;">
+              <button type="button" class="btn btn-info disabled">Download png</button>
+              <button type="button" class="btn btn-info disabled">Download json</button>
+            </div>
+          </div><br><br>
+          <div class="slot-buttons">
+            <button type="button" id="editSlot" class="btn btn-primary disabled"><span class="glyphicon glyphicon-edit"></span> Edit Map</button>
+            <button type="button" id="saveToSlot" class="btn btn-success disabled"><span class="glyphicon glyphicon-floppy-disk"></span> Save to Slot</button>
+            <button type="button" id="clearSlot" class="btn btn-danger disabled"><span class="glyphicon glyphicon-trash"></span> Clear Slot</button>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="modal fade" id="instructions" tabindex="-1" role="dialog" aria-labelledby="instructionsLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title" id="instructionsLabel">Instructions</h4>
+        </div>
+        <div class="modal-body panel-group" id="accordion">
+          <p>Select a tile type from the palette on the left to draw it on the map. You can click and drag on the map for faster drawing. Different tools are available for drawing multiple tiles at once including a line and rectangle shape tool. Mouseover the icons below to see additional information about each tool and click the headings for more details.</p>
+          <div class="form-group">
+            <div role="toolbar">
+              <div class="col-lg-9" style="margin-left: 12.5%">
+                <div class="btn-group btn-group-justified">
+                  <a class="btn btn-default btn-sm" role="button" data-toggle="popover" data-container="#instructions" data-placement="bottom" data-trigger="hover focus" title="Pencil" data-content="Paint a tile at a time"><span class="glyphicon glyphicon-pencil"></span></a>
+                  <a class="btn btn-default btn-sm" role="button" data-toggle="popover" data-container="#instructions" data-placement="bottom" data-trigger="hover focus" title="Brush" data-content="Paint a 3x3 area"><span class="glyphicon glyphicon-th-large"></span></a>
+                  <a class="btn btn-default btn-sm" role="button" data-toggle="popover" data-container="#instructions" data-placement="bottom" data-trigger="hover focus" title="Line" data-content="Click and drag to draw a line between two points"><span class="glyphicon glyphicon-minus"></span></a>
+                  <a class="btn btn-default btn-sm" role="button" data-toggle="popover" data-container="#instructions" data-placement="bottom" data-trigger="hover focus" title="Filled Rectangle" data-content="Click and drag to draw a filled in rectangle - hold shift to make a square"><span class="glyphicon glyphicon-stop"></span></a>
+                  <a class="btn btn-default btn-sm" role="button" data-toggle="popover" data-container="#instructions" data-placement="bottom" data-trigger="hover focus" title="Outlined Rectangle" data-content="Click and drag to draw a one-tile wide outline of a rectangle - hold shift to make a square"><span class="glyphicon glyphicon-unchecked"></span></a>
+                  <a class="btn btn-default btn-sm" role="button" data-toggle="popover" data-container="#instructions" data-placement="bottom" data-trigger="hover focus" title="Filled Circle" data-content="Click and drag to draw a filled in circle - hold shift to make a perfect circle"><span class="glyphicon glyphicon-record"></span></a>
+                  <a class="btn btn-default btn-sm" role="button" data-toggle="popover" data-container="#instructions" data-placement="bottom" data-trigger="hover focus" title="Outlined Circle" data-content="Click and drag to draw a one-tile wide outline of a circle - hold shift to make a perfect circle"><span class="glyphicon glyphicon-remove-circle"></span></a>
+                  <a class="btn btn-default btn-sm" role="button" data-toggle="popover" data-container="#instructions" data-placement="bottom" data-trigger="hover focus" title="Fill" data-content="Fill an area of tiles - hold shift to expand the fill area across diagonally connected tiles"><span class="glyphicon glyphicon-tint"></span></a>
+                  <a class="btn btn-default btn-sm" role="button" data-toggle="popover" data-container="#instructions" data-placement="bottom" data-trigger="hover focus" title="Wire" data-content="First select a portal or button and then click the exit portal or the gate(s) and bomb(s) the button activates"><span class="glyphicon glyphicon-wrench"></span></a>
+                  <a class="btn btn-default btn-sm" role="button" data-toggle="popover" data-container="#instructions" data-placement="bottom" data-trigger="hover focus" title="Cut/Copy and Paste" data-content="Click and drag to select an area to duplicate, then click and drag to paste a copy elsewhere in its entirety - hold shift while pasting to paste a pattern in a grid or hold control while pasting to cut out the original tiles"><span class="glyphicon glyphicon-folder-close"></span></a>
+                </div>
+              </div>
+            </div>
+          </div><br><br>
+          <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="headingOne" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+              <h5 class="panel-title">
+                <a>Portal Cooldowns and Button Timers</a>
+              </h5>
+            </div>
+            <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+              <div class="panel-body">
+                <p>Portals have modifiable cooldown times, which is 0 seconds by default when using this map editor. To modify a portal's cooldown time, place a portal on the map and shift+click the tile. Enter a new portal cooldown time in the dialog box that appears. Or, modify the default portal cooldown time and all portals at once by shift+clicking the portal icon on the left of the screen. Note that cooldown times must be greater than or equal to 0 and entered in milliseconds where 1000 milliseconds is equivalent to 1 second.</p>
+                <p>Buttons have modifiable timers as well. By default, button timers are 0 seconds meaning that any button pressed does not remain held down when a player leaves the button. Shift+click a button to change its timer or shift+click the button icon on the left screen to modify the default button timer and change the timer of all buttons at once. Note that button timers are given in seconds and any negative number can be used to make a button permanently active once pressed.
+              </div>
+            </div>
+          </div>
+          <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="headingTwo" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+              <h5 class="panel-title">
+                <a>Spawn Points and Mars Balls</a>
+              </h5>
+            </div>
+            <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+              <div class="panel-body">
+                <p>Spawn points and mars balls are placed on top of other map elements. Spawn points can only be placed on floor tiles or team tiles, but mars balls can be placed on top of any other tile type.</p>
+                <p>Additionally, spawn points have modifiable radii and weights. To modify a spawn point's radius and weight, shift+click the spawn tile on the map. Spawn tiles have a default radius of 5 tiles and a default weight of 1. Increase the weight to increase the frequency that players spawn in that area. The spawn radius must be greater than or equal to 0 where a radius of 0 will force all spawns to that tile only. You can also modify all spawn tiles at once by shift+clicking the spawn ball icon on the left of the screen. Note that both red and blue spawn tiles share the same default settings and will all be changed.</p>
+              </div>
+            </div>
+          </div>
+          <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="headingThree" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="true" aria-controls="collapseThree">
+              <h5 class="panel-title">
+                <a>Additional Tools and Information</a>
+              </h5>
+            </div>
+            <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+              <div class="panel-body">
+                <p>You can also resize, rotate, flip, and mirror your map at any point. You can also undo/redo changes by either pressing the undo/redo buttons or pressing z to undo and y to redo. To resize your map you can either use the main resizing tool which will allow you to pick a specific size, or you can quickly add a row or column anywhere on the map by using either of the other two resizing tools. Mouseover the icons below for more information on each tool.</p>
+                <p>To quickly change the selected tile type, hotkeys are set up for the most common tools and map elements. Press and hold the alt key to temporarily view the hotkeys or double press the alt key to keep the hotkeys permanently visible until you press the alt key again. You can also ctrl+click on an element on the map itself to easily change the selected tile type that.</p>
+                <div class="form-group">
+                  <div class="row">
+                    <div class="col-xs-3" style="width: 25%">
+                      <div class="btn-group btn-group-justified" role="toolbar">
+                        <a class="btn btn-default" data-toggle="popover" data-container="#instructions" data-placement="top" data-trigger="hover focus" title="Resize" data-content="Allows you to specify a map width and height"><span class="glyphicon glyphicon-resize-full"></span></a>
+                        <a class="btn btn-default" data-toggle="popover" data-container="#instructions" data-placement="top" data-trigger="hover focus" title="Add Columns" data-content="Click and drag to widen your map by adding one or more columns - hold ctrl while dragging to remove the selected columns"><span class="glyphicon glyphicon-resize-horizontal off-center"></span></a>
+                        <a class="btn btn-default" data-toggle="popover" data-container="#instructions" data-placement="top" data-trigger="hover focus" title="Add Rows" data-content="Click and drag to make your map taller your map by adding one or more rows - hold ctrl while dragging to remove the selected rows"><span class="glyphicon glyphicon-resize-vertical off-center"></span></a>
+                      </div>
+                    </div>
+                    
+                    <div class="col-xs-3" style="width: 18.5%">
+                      <div class="btn-group btn-group-justified" role="toolbar">
+                        <a class="btn btn-default" data-toggle="popover" data-container="#instructions" data-placement="top" data-trigger="hover focus" title="Undo" data-content="Undo the most recent change"><span class="glyphicon glyphicon-flipped glyphicon-share-alt off-center2"></span></a>
+                        <a class="btn btn-default" data-toggle="popover" data-container="#instructions" data-placement="top" data-trigger="hover focus" title="Redo" data-content="Redo the most recently undone change"><span class="glyphicon glyphicon-share-alt off-center"></span></a>
+                      </div>
+                    </div>
+              
+                    <div class="col-xs-3" style="width: 18.5%">
+                      <div class="btn-group btn-group-justified" role="toolbar">
+                        <a class="btn btn-default" data-toggle="popover" data-container="#instructions" data-placement="top" data-trigger="hover focus" title="Rotate Left" data-content="Rotate the map left by 90 degrees"><span class="glyphicon glyphicon-flipped glyphicon-retweet off-center2"></span></a>
+                        <a class="btn btn-default" data-toggle="popover" data-container="#instructions" data-placement="top" data-trigger="hover focus" title="Rotate Right" data-content="Rotate the map right by 90 degrees"><span class="glyphicon glyphicon-retweet off-center2"></span></a>
+                      </div>
+                    </div>
+
+                    <div class="col-xs-3" style="width: 18.5%">
+                      <div class="btn-group btn-group-justified" role="toolbar">
+                        <a class="btn btn-default" data-toggle="popover" data-container="#instructions" data-placement="top" data-trigger="hover focus" title="Flip Vertical" data-content="Flip the map vertically across the x-axis"><span class="glyphicon glyphicon-sort off-center"></span></a>
+                        <a class="btn btn-default" data-toggle="popover" data-container="#instructions" data-placement="top" data-trigger="hover focus" title="Flip Horizontal" data-content="Flip the map horizontally across the y-axis"><span class="glyphicon glphyicon-flipped glyphicon-sort off-center2"></span></a>
+                      </div>
+                    </div>
+
+                    <div class="col-xs-3" style="width: 18.5%">
+                      <div class="btn-group btn-group-justified" role="toolbar">
+                        <a class="btn btn-default" data-toggle="popover" data-container="#instructions" data-placement="top" data-trigger="hover focus" title="Mirror Map" data-content="Allows you to mirror the map along its top, bottom, left, or right edge"><span class="glyphicon glyphicon-rotate-right glyphicon-sound-stereo"></span> / <span class="glyphicon glyphicon-sound-stereo"></span></a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="headingFour" data-toggle="collapse" data-parent="#accordion" href="#collapseFour" aria-expanded="true" aria-controls="collapseFour">
+              <h5 class="panel-title">
+                <a>Saving and Loading a Saved Map</a>
+              </h5>
+            </div>
+            <div id="collapseFour" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingFour">
+              <div class="panel-body">
+                <p>While editing, your map will auto-save to cache every so often as you make changes. Maps are also automatically saved when leaving the page or when refreshed. In addition to the default map saving, there are 3 slots to save maps to. Maps slots can only be saved to manually and are great for working on multiple projects at once.</p>
+              </div>
+            </div>
+          </div>
+          <br>
+          <h4>Happy map making!</h4>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="modal" id="resizeDialog" tabindex="-1" role="dialog" aria-labelledby="resizeLabel" aria-hidden="true">
+    <div class="vertical-alignment-helper">
+      <div class="modal-dialog modal-sm vertical-align-center">
+        <div class="modal-content">
+          <div class="modal-header modal-colored-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" id="resizeLabel">Resize Map</h4>
+          </div>
+          <div class="modal-body" style="text-align: center;">
+            <table>
+              <tr>
+                <td></td>
+                <td style='text-align:center'>
+                  <a id="resizeAnchorTop" class="btn btn-xs btn-default" title="Extend/Shrink Up"><span class="glyphicon glyphicon-arrow-up"></span></a>
+                </td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>
+                  <a id="resizeAnchorLeft" class="btn btn-xs btn-default" title="Extend/Shrink Left"><span class="glyphicon glyphicon-arrow-left"></span></a>
+                </td>
+                <td style='text-align:center'>
+          
+                </td>
+                <td>
+                  <a id="resizeAnchorRight" class="btn btn-xs btn-default" title="Extend/Shrink Right"><span class="glyphicon glyphicon-arrow-right"></span></a>
+                </td>
+              </tr>
+              <tr>
+                <td></td>
+                <td style='text-align:center'>
+                  <a id="resizeAnchorBottom" class="btn btn-xs btn-default" title="Extend/Shrink Down"><span class="glyphicon glyphicon-arrow-down"></span></a>
+                </td>
+                <td></td>
+              </tr>
+            </table><br>
+            <div>
+              Width: <input type='text' id='resizeWidthTo' style='width:4em' />&emsp;&emsp;&emsp;Height: <input type='text' id='resizeHeightTo' style='width:4em' />
+            </div>
+            <div class="modal-footer">
+              <button id="resizeSubmit" type="button" class="btn btn-primary" data-dismiss="modal">Resize</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="modal" id="spawnOptions" tabindex="-1" role="dialog" aria-labelledby="spawnLabel" aria-hidden="true">
+    <div class="vertical-alignment-helper">
+      <div class="modal-dialog modal-sm vertical-align-center">
+        <div class="modal-content">
+          <div class="modal-header modal-colored-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" id="spawnLabel">Spawn Point</h4>
+          </div>
+          <div class="modal-body" style="text-align: center;">
+            <div>
+              Spawn Radius: <input type='text' id='spawnRadius' style='width:4em' />
+            </div><br>
+            <div>
+              Spawn Weight: <input type='text' id='spawnWeight' style='width:4em' />
+            </div><br>
+            <div id="spawnAll" style="text-align: left;">
+              <label class="radioLabel" style="width: auto">
+                <input type='radio' name="spawnType" value="all" checked/>  Change all spawn points<br>
+              </label>
+              <label class="radioLabel" style="width: auto">
+                <input type='radio' name="spawnType" value="default"/>  Change only unmodified spawn points
+              </label>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button id="spawnSubmit" type="button" class="btn btn-primary" data-dismiss="modal">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="modal" id="portalOptions" tabindex="-1" role="dialog" aria-labelledby="portalLabel" aria-hidden="true">
+    <div class="vertical-alignment-helper">
+      <div class="modal-dialog modal-sm vertical-align-center">
+        <div class="modal-content">
+          <div class="modal-header modal-colored-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" id="portalLabel">Portal</h4>
+          </div>
+          <div class="modal-body" style="text-align: center;">
+            <div style="text-align: left;">
+              Choose the portal cooldown time in milliseconds.
+            </div><br>
+            <div>
+              Cooldown: <input type='text' id='portalCooldown' style='width:4em' />
+            </div><br>
+            <div id="portalAll" style="text-align: left;">
+              <label class="radioLabel" style="width: auto">
+                <input type='radio' name="portalType" value="all" checked/>  Change all portals<br>
+              </label>
+              <label class="radioLabel" style="width: auto">
+                <input type='radio' name="portalType" value="default"/>  Change only unmodified portals
+              </label>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button id="portalSubmit" type="button" class="btn btn-primary" data-dismiss="modal">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="modal" id="switchOptions" tabindex="-1" role="dialog" aria-labelledby="switchLabel" aria-hidden="true">
+    <div class="vertical-alignment-helper">
+      <div class="modal-dialog modal-sm vertical-align-center">
+        <div class="modal-content">
+          <div class="modal-header modal-colored-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" id="switchLabel">Button</h4>
+          </div>
+          <div class="modal-body" style="text-align: center;">
+            <div style="text-align: left;">
+              Choose the button timer time in seconds.
+            </div><br>
+            <div>
+              Timer: <input type='text' id='switchTimer' style='width:4em' />
+            </div><br>
+            <div id="switchAll" style="text-align: left;">
+              <label class="radioLabel" style="width: auto">
+                <input type='radio' name="switchType" value="all" checked/>  Change all buttons<br>
+              </label>
+              <label class="radioLabel" style="width: auto">
+                <input type='radio' name="switchType" value="default"/>  Change only unmodified buttons
+              </label>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button id="switchSubmit" type="button" class="btn btn-primary" data-dismiss="modal">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="modal" id="mirrorOptions" tabindex="-1" role="dialog" aria-labelledby="mirrorLabel" aria-hidden="true">
+    <div class="vertical-alignment-helper">
+      <div class="modal-dialog modal-sm vertical-align-center">
+        <div class="modal-content">
+          <div class="modal-header modal-colored-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" id="mirrorLabel">Mirror Map</h4>
+          </div>
+          <div class="modal-body" style="text-align: center;">
+            <div style="text-align: left;">
+              Pick a direction to mirror in:
+            </div><br>
+            <table>
+              <tr>
+                <td></td>
+                <td style='text-align:center'>
+                  <a id="mirrorAnchorTop" class="btn btn-xs btn-default mirror-dir" title="Mirror Up" value="[0,-1]"><span class="glyphicon glyphicon-arrow-up"></span></a>
+                </td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>
+                  <a id="mirrorAnchorLeft" class="btn btn-xs btn-default mirror-dir" title="Mirror Left" value="[-1,0]"><span class="glyphicon glyphicon-arrow-left"></span></a>
+                </td>
+                <td style='text-align:center'>
+          
+                </td>
+                <td>
+                  <a id="mirrorAnchorRight" class="btn btn-xs btn-default mirror-dir" title="Mirror Right" value="[-2,0]"><span class="glyphicon glyphicon-arrow-right"></span></a>
+                </td>
+              </tr>
+              <tr>
+                <td></td>
+                <td style='text-align:center'>
+                  <a id="mirrorAnchorBottom" class="btn btn-xs btn-default mirror-dir" title="Mirror Down" value="[0,-2]"><span class="glyphicon glyphicon-arrow-down"></span></a>
+                </td>
+                <td></td>
+              </tr>
+            </table>
+          </div>
+          <div class="modal-footer">
+            <button id="mirrorSubmit" type="button" class="btn btn-primary" data-dismiss="modal">Mirror</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div id="alerts" style="display: table; position: absolute; width: 33%; top: 20px; margin: auto; left: 0px; right: 0px; z-index: 2000;"></div>
+  
+  
+
+
+  <script>
+  </script>
+  <script type="text/javascript" src="/static/tagpro-map-editor/map.js"></script>
+
+
+    </div>
+
+    <footer class="footer" id="jjlogo">
+        <div class="footer-content">
+            <img src="/static/images/poweredby.png" />
+        </div>
+    </footer>
+
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script>
+        // Search function
+
+        // Handle search form submission
+        // Write window URL on form submission so searches can be shared
+        $("#searchform").submit( function(event) {
+            query = $("#search").val();
+            clearTimeout(lastTimeout);
+            window.location.replace(window.location.origin+"/search?query="+query);
+            return false;
+        });
+
+
+        // Handle instant search results
+        // Delay is set to 500 milliseconds between keypresses
+        // Standalone set to true so entire page doesn't reload
+        requestDelay = 500;
+        lastTimeout = false;
+        $('body').delegate('#search', 'keyup', function() {
+            query = $("#search").val();
+            if(true) {
+                if(lastTimeout) {
+                    clearTimeout(lastTimeout);
+                }
+                lastTimeout = setTimeout( function () {
+                        $.ajax({
+                            url:"/search",
+                            data:{"query":query, "standalone":true}
+                        }).done(function(data) {
+                            if(data.success) {
+                                $("#mapdiv").html(data.html);
+                            }
+                        });
+                        lastTimeout = false;
+                    }, requestDelay);
+
+            }
+        });
+    </script>
+    
+    
+
+
+
+
+
+	</body>
+</html>
