@@ -57,7 +57,8 @@ function script() {
                 if (this.role.state === 'follow') {    // bot should follow around human player
                     if (!this.human) {
                         let humanPlayers = Object.keys(tagpro.players).filter(x => {
-                            return tagpro.players[x].name === 'Player 1';   // Hardcoding that human player has to be named 'Player 1'
+                            // return tagpro.players[x].name === 'Player 1';   // Hardcoding that human player has to be named 'Player 1'
+                            return x !== tagpro.playerId;
                         })
                         if (humanPlayers.length > 0) {
                             this.human = tagpro.players[humanPlayers[0]];
@@ -115,8 +116,8 @@ function script() {
                         case 1:      // waiting on boost
                             target = {x: this.me.x, y: this.me.y, vx: -this.human.vx, xy: 0};
                             break;
-                        case 2:
-                            target = {x: this.obsData.positions.goal[0]*40, y: this.obsData.positions.goal[1]*40, vx: -this.human.vx, xy: 0};
+                        case 2:      // go to goal
+                            target = {x: this.obsData.positions.goal[0]*40, y: this.obsData.positions.goal[1]*40, vx: -0, vy: -0};
                             break;
                         default:
                             break;
@@ -127,8 +128,6 @@ function script() {
                 if (!isDone) {
                     var [x, y] = this.path[this.currTargetIndex];
                     target = {x: x*40, y: y*40, vx: -0, vy: -0};
-                } else {
-                    console.log("ALLL DDOOONE");
                 }
             }
 
@@ -193,11 +192,11 @@ function script() {
                     }
                 }
             } else if (this.role.state === 'Trust') {
-                if (this.human.flag || this.me.flag) {   // if either player has flag, go to goal
+                if (this.human.flag || this.me.flag && !this.role.step === 2) {   // if either player has flag, go to goal
                     this.set_state(this.role.state, 2, false); 
-                } else {
-                    if (this.role.step === 0) {
-                        if (this.startedPath && !this.isAlongPath) {
+                } else if (this.role.step !== 2) {
+                    if (this.role.step === 0) {    // start of obstacle, go to waiting spot 
+                        if (this.startedPath && !this.isAlongPath) {      // finished path, moment of truth 
                             this.startedPath = false;
                             this.set_state(obstacle.name, 1, false);
                         }
@@ -324,7 +323,6 @@ function preprocess() {
                     y2: (y + obstcl.botRightOffset[1]) * 40
                 }
                 obstclData.name = obstcl.name;
-                obstacles[obstcl.name] = obstclData;
                 if (obstclData.name === 'Basic Button') {
                     obstclData.positions.gatePos = [point[0], point[1] - 8];
                     obstclData.positions.button1 = [point[0] - 2, point[1] - 5];
@@ -337,7 +335,10 @@ function preprocess() {
                     obstclData.positions.interPos2 = [point[0] + 7, point[1] + 4];  // top right of obstacle
                     obstclData.positions.interPos1 = [point[0] - 7, point[1] + 4];  // top left of obstacle
                     obstclData.positions.goal = [point[0] + obstcl.goalOffset[0], point[1] + obstcl.goalOffset[1]];
+                } else if (obstacleData.name === 'Mars') {
+
                 }
+                obstacles[obstcl.name] = obstclData;
                 break;
             }
         }

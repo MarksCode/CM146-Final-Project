@@ -26,5 +26,19 @@
             [0, 0, 0],
             [1, 0, 1]
         ]
+    },
+    "2": {
+        "key": "2",
+        "name": "Mars",
+        "height": 10,
+        "width": 30,
+        "topLeftOffset": [0, -5],
+        "botRightOffset": [30, 5],
+        "goalOffset": [27, -5],
+        "config": [
+            [0, 1, 0],
+            [1, 0, 1],
+            [0, 1, 0]
+        ]
     }
 }

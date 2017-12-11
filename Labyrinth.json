@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "Labyrinth",
-    "author": "Anonymous",
+    "author": "146 Crew",
     "gameMode": "normal"
   },
   "switches": {
@@ -74,6 +74,35 @@
         }
       ],
       "timer": 0
+    },
+    "42,48": {
+      "toggle": [
+        {
+          "pos": {
+            "x": 39,
+            "y": 52
+          }
+        },
+        {
+          "pos": {
+            "x": 39,
+            "y": 53
+          }
+        },
+        {
+          "pos": {
+            "x": 39,
+            "y": 54
+          }
+        },
+        {
+          "pos": {
+            "x": 42,
+            "y": 47
+          }
+        }
+      ],
+      "timer": 0
     }
   },
   "fields": {
@@ -92,57 +121,93 @@
     "9,10": {
       "defaultState": "on"
     },
-    "27,8": {
+    "14,50": {
       "defaultState": "off"
     },
-    "27,10": {
+    "15,49": {
       "defaultState": "off"
     },
-    "29,8": {
+    "15,51": {
       "defaultState": "off"
     },
-    "29,10": {
+    "16,50": {
       "defaultState": "off"
+    },
+    "27,14": {
+      "defaultState": "off"
+    },
+    "27,16": {
+      "defaultState": "off"
+    },
+    "29,14": {
+      "defaultState": "off"
+    },
+    "29,16": {
+      "defaultState": "off"
+    },
+    "39,52": {
+      "defaultState": "on"
+    },
+    "39,53": {
+      "defaultState": "on"
+    },
+    "39,54": {
+      "defaultState": "on"
     }
   },
   "portals": {
-    "23,16": {
+    "20,48": {
       "destination": {
         "x": 25,
-        "y": 16
+        "y": 48
       },
       "cooldown": 0
     },
-    "25,16": {},
-    "31,16": {},
-    "33,16": {
+    "20,52": {
+      "destination": {
+        "x": 25,
+        "y": 52
+      },
+      "cooldown": 0
+    },
+    "23,22": {
+      "destination": {
+        "x": 25,
+        "y": 22
+      },
+      "cooldown": 0
+    },
+    "25,22": {},
+    "25,48": {},
+    "25,52": {},
+    "31,22": {},
+    "33,22": {
       "destination": {
         "x": 31,
-        "y": 16
+        "y": 22
       },
       "cooldown": 0
     }
   },
-  "marsballs": [],
+  "marsballs": [
+    {
+      "y": 53,
+      "x": 33
+    }
+  ],
   "spawnPoints": {
     "red": [
       {
-        "x": 2,
-        "y": 32,
-        "radius": 1,
-        "weight": 1
-      },
-      {
-        "x": 2,
-        "y": 34,
+        "x": 12,
+        "y": 50,
         "radius": 1,
         "weight": 1
       }
     ],
     "blue": [
       {
-        "x": 2,
-        "y": 33,
+        "x": 11,
+        "y": 50,
         "radius": 1,
         "weight": 1
       }
