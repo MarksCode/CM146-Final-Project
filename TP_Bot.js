@@ -182,39 +182,39 @@ function script() {
         // Were inside an obstacle. Decide if we've exited, otherwise decide step
         decision_maker.decide_step = function(){
             let obstacle = obstacles[this.obsKey];
+            let {x1, y1, x2, y2} = obstacle.dim;
+            if (this.me.x < x1 || this.me.x > x2 || this.me.y < y1 || this.me.y > y2) {  // we're outside obstacle
+                this.set_state('follow', 0, false);
+            }
             if (this.role.state === 'Basic Button') {
-                let {x1, y1, x2, y2} = obstacle.dim;
-                if (this.me.x < x1 || this.me.x > x2 || this.me.y < y1 || this.me.y > y2) {  // we're outside obstacle
-                    this.set_state('follow', 0, false);
+                let isHumanPastGate = this.human.y + 50 < this.obsData.positions.gatePos[1] * 40 ? true : false;
+                let isBotPastGate = this.me.y + 50 < this.obsData.positions.gatePos[1] * 40 ? true : false;
+                if (isHumanPastGate && isBotPastGate) {  // check if both players above gate
+                    this.set_state(this.role.state, 3, false);
                 } else {
-                    let isHumanPastGate = this.human.y + 50 < this.obsData.positions.gatePos[1] * 40 ? true : false;
-                    let isBotPastGate = this.me.y + 50 < this.obsData.positions.gatePos[1] * 40 ? true : false;
-                    if (isHumanPastGate && isBotPastGate) {  // check if both players above gate
-                        this.set_state(this.role.state, 3, false);
-                    } else {
-                        let [i, y] = this.obsData.positions.gatePos;
-                        let isGateOpen = tagpro.map[i][y] === 9.1 ? false : true;
-                        if (!isGateOpen) {   // gate is not open
-                            if (!isHumanPastGate && !isBotPastGate) {  // human and bot both behind gate
-                                this.set_state(this.role.state, 0, false);
-                            } else if (isBotPastGate && !isHumanPastGate) { // bot ahead, human behind
-                                this.set_state(this.role.state, 1, false);
-                            } else {
-                                this.set_state(this.role.state, 2, false); // bot should wait for human to open gate
-                            }
+                    let [i, y] = this.obsData.positions.gatePos;
+                    let isGateOpen = tagpro.map[i][y] === 9.1 ? false : true;
+                    if (!isGateOpen) {   // gate is not open
+                        if (!isHumanPastGate && !isBotPastGate) {  // human and bot both behind gate
+                            this.set_state(this.role.state, 0, false);
+                        } else if (isBotPastGate && !isHumanPastGate) { // bot ahead, human behind
+                            this.set_state(this.role.state, 1, false);
                         } else {
-                            if (this.isOnTile(false, this.obsData.positions.button2, 25)) {  // human is on button 2
-                                this.set_state(this.role.state, 1, false);
-                            } else if (this.isOnTile(true, this.obsData.positions.button1, 25)) { // bot is on button1, dont move
-                                this.set_state(this.role.state, 2, false);
-                            } else if (this.isOnTile(true, this.obsData.positions.button2, 25)) { // bot is on button2
-                                this.set_state(this.role.state, 2, false);
-                            } else {
-                                this.set_state(this.role.state, 1, false);
-                            }
+                            this.set_state(this.role.state, 2, false); // bot should wait for human to open gate
+                        }
+                    } else {
+                        if (this.isOnTile(false, this.obsData.positions.button2, 25)) {  // human is on button 2
+                            this.set_state(this.role.state, 1, false);
+                        } else if (this.isOnTile(true, this.obsData.positions.button1, 25)) { // bot is on button1, dont move
+                            this.set_state(this.role.state, 2, false);
+                        } else if (this.isOnTile(true, this.obsData.positions.button2, 25)) { // bot is on button2
+                            this.set_state(this.role.state, 2, false);
+                        } else {
+                            this.set_state(this.role.state, 1, false);
                         }
                     }
                 }
+                
             } else if (this.role.state === 'Trust') {
                 if (this.human.flag || this.me.flag && !this.role.step === 2) {   // if either player has flag, go to goal
                     this.set_state(this.role.state, 2, false); 
@@ -243,6 +243,8 @@ function script() {
                         this.set_state(obstacle.name, 3, false);
                     }
                 }
+            } else if (this.role.state === 'Sacrifice') {
+                
             }
         }
 
@@ -382,7 +384,11 @@ function preprocess() {
                     obstclData.positions.waitPos2 = [point[0] + 27, point[1]];    // underneath button
                     obstclData.positions.button = [point[0] + 27, point[1] - 2];  // button
                     obstclData.positions.marsRange1 = [point[0] + 25, point[1]];  // left most of where mars ball should end up
-                    obstclData.positions.marsRange2 =  [point[0] + 27, point[1]];  // right most of where mars ball should end up
+                } else if (obstclData.name === 'Sacrifice') {
+                    obstclData.positions.interPos1 = [point[0] - 3, point[1] - 6];  // path point 1
+                    obstclData.positions.interPos1 = [point[0] - 3, point[1] - 11]; // path point 2
+                    obstclData.positions.waitPos1 = [point[0], point[1] - 11];      // beneath bomb
+                    obstclData.positions.bomb = [[point[0], point[1] - 13]]         // bomb
                 }
                 obstacles[obstcl.name] = obstclData;
                 break;

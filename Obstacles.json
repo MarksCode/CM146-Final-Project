@@ -40,5 +40,19 @@
             [1, 0, 1],
             [0, 1, 0]
         ]
+    },
+    "3": {
+        "key": "3",
+        "name": "Sacrifice",
+        "height": 23,
+        "width": 11,
+        "topLeftOffset": [-5, -22],
+        "botRightOffset": [5, 0],
+        "goalOffset": [0, -20],
+        "config": [
+            [1, 1, 1],
+            [1, 0, 1],
+            [1, 1, 1]
+        ]
     }
 }

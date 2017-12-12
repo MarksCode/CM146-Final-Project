@@ -10,7 +10,8 @@
 
 4. Join the red team and launch the game, these are recommended settings:
     1. Map: Open Field Masters (this will eventually be the labyrinth we'll create)
-    2. Waiting Time: 1 Second (reduces countdown before game start)
+    2. Labyrinth Link: http://unfortunate-maps.jukejuice.com/show/55222
+    3. Waiting Time: 1 Second (reduces countdown before game start)
 
 5. Bot behavior should take over at this point!
 
