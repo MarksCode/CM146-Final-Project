@@ -48,7 +48,7 @@
         "width": 11,
         "topLeftOffset": [-5, -22],
         "botRightOffset": [5, 0],
-        "goalOffset": [0, -20],
+        "goalOffset": [0, -20.2],
         "config": [
             [1, 1, 1],
             [1, 0, 1],

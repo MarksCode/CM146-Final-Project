@@ -146,6 +146,24 @@ function script() {
                             break;
                     }
                     target = {x: x, y: y, vx: -0, vy: -0};
+                } else if (this.role.state === 'Sacrifice') {
+                    switch (this.role.step) {
+                        case 0:      // bot should go to waiting area
+                            let path = [];
+                            path.push(this.obsData.positions.interPos1);
+                            path.push(this.obsData.positions.interPos2);
+                            path.push(this.obsData.positions.waitPos1);
+                            this.startedPath = true;
+                            this.startPath(path);
+                            break;
+                        case 1:
+                            let x = this.obsData.positions.bomb[0] * 40;
+                            let y = this.obsData.positions.bomb[1] * 40;
+                            target = {x: x, y: y, vx: -0, vy: -0};
+                            break;
+                        default:
+                            break;
+                    }
                 }
             } else {   // move along a path
                 let isDone = this.moveAlongPath();
@@ -156,7 +174,7 @@ function script() {
             }
 
             // highlights
-            debugr.draw_point(target.x, target.y);
+            //debugr.draw_point(target.x, target.y);
 
             return target;
         }
@@ -244,7 +262,12 @@ function script() {
                     }
                 }
             } else if (this.role.state === 'Sacrifice') {
-                
+                if (this.role.step === 0) {
+                    if (this.startedPath && !this.isAlongPath) {  // finished path
+                        this.startedPath = false;
+                        this.set_state(obstacle.name, 1, false);
+                    }
+                }
             }
         }
 
@@ -300,7 +323,7 @@ function script() {
 
     function run_bot() {
         var me = tagpro.players[tagpro.playerId];
-        // no_draw();
+        //no_draw();
 
         PID_constants = {};
         PID_constants.KP = 0.036;
@@ -386,9 +409,9 @@ function preprocess() {
                     obstclData.positions.marsRange1 = [point[0] + 25, point[1]];  // left most of where mars ball should end up
                 } else if (obstclData.name === 'Sacrifice') {
                     obstclData.positions.interPos1 = [point[0] - 3, point[1] - 6];  // path point 1
-                    obstclData.positions.interPos1 = [point[0] - 3, point[1] - 11]; // path point 2
+                    obstclData.positions.interPos2 = [point[0] - 3, point[1] - 10]; // path point 2
                     obstclData.positions.waitPos1 = [point[0], point[1] - 11];      // beneath bomb
-                    obstclData.positions.bomb = [[point[0], point[1] - 13]]         // bomb
+                    obstclData.positions.bomb = [point[0], point[1] - 13];         // bomb
                 }
                 obstacles[obstcl.name] = obstclData;
                 break;
