@@ -139,8 +139,8 @@ function script() {
                             y = this.obsData.positions.button[1] * 40;
                             break;
                         case 3:
-                            x = this.obsData.positions.goal[0] * 40;
-                            y = this.obsData.positions.goal[1] * 40;
+                            x = this.obsData.positions.goal[0] * 40 + 160;
+                            y = this.obsData.positions.goal[1] * 40 + 160;
                             break;
                         default:
                             break;
