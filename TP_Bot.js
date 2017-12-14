@@ -232,13 +232,13 @@ function script() {
                         }
                     }
                 }
-                
+
             } else if (this.role.state === 'Trust') {
                 if (this.human.flag || this.me.flag && !this.role.step === 2) {   // if either player has flag, go to goal
-                    this.set_state(this.role.state, 2, false); 
+                    this.set_state(this.role.state, 2, false);
                 } else if (this.role.step !== 2) {
-                    if (this.role.step === 0) {    // start of obstacle, go to waiting spot 
-                        if (this.startedPath && !this.isAlongPath) {  // finished path, moment of truth 
+                    if (this.role.step === 0) {    // start of obstacle, go to waiting spot
+                        if (this.startedPath && !this.isAlongPath) {  // finished path, moment of truth
                             this.startedPath = false;
                             this.set_state(obstacle.name, 1, false);
                         }
@@ -253,7 +253,7 @@ function script() {
                 } else if (this.role.step === 1) {
                     let marsBall = tagpro.objects[0];
                     let x1 = this.obsData.positions.marsRange1[0] * 40;
-                    if (marsBall && marsBall.x > x1) {   // check if mars ball is in correct position
+                    if (marsBall && marsBall.x > (x1 + 40)) {   // check if mars ball is in correct position
                         this.set_state(obstacle.name, 2, false);
                     }
                 } else if (this.role.step === 2) {   // wait for human to cross gate
@@ -285,7 +285,6 @@ function script() {
         //    dist = accuracy of check
         decision_maker.isOnTile = function(isBot, tile, dist=3) {
             let {x, y} = isBot ? this.me : this.human;  // x and y coords of player
-            x; y;
             let tx = tile[0] * 40;
             let ty = tile[1] * 40;
             let d = Math.sqrt(Math.pow(tx-x, 2) + Math.pow(ty-y, 2));
@@ -362,7 +361,7 @@ function preprocess() {
                 obstacleStartingPoints.push([i, y]);
             }
         }
-    } 
+    }
     for (let point of obstacleStartingPoints) {
         let [i, y] = point;
         let config = [
